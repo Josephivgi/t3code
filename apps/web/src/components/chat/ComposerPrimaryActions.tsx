@@ -412,6 +412,7 @@ export const ComposerPrimaryActions = memo(function ComposerPrimaryActions({
   const sendButton = (
     <button
       type={showResume ? "button" : "submit"}
+      data-chat-send-button
       className={cn(
         azonLayout ? "h-9 gap-1.5 px-3.5 sm:h-8" : "h-9 w-9 sm:h-8 sm:w-8",
         "relative isolate flex items-center justify-center overflow-hidden rounded-full shadow-xs transition-all duration-150 enabled:cursor-pointer enabled:inset-shadow-control-highlight hover:scale-105 active:inset-shadow-control-pressed active:shadow-none disabled:pointer-events-none disabled:shadow-none disabled:hover:scale-100 [&_svg]:pointer-events-none",

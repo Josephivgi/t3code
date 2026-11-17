@@ -2655,7 +2655,7 @@ code {
     color-mix(in srgb, var(--muted, #f4f4f5) 55%, var(--background, #fff))
   );
 }
-[data-ui-style="azon"] [data-testid="sidebar-row-card"] {
+[data-ui-style="azon"] [data-slot="sidebar-row-card"] {
   border: 1px solid color-mix(in srgb, var(--border, #e4e4e7) 80%, transparent);
   border-radius: 0.875rem;
   background: color-mix(in srgb, var(--foreground, #000) 4%, var(--card, var(--background, #fff)));
@@ -2664,21 +2664,21 @@ code {
     border-color 120ms,
     box-shadow 120ms;
 }
-[data-ui-style="azon"] [data-testid="sidebar-row-card"]:focus-within {
+[data-ui-style="azon"] [data-slot="sidebar-row-card"]:focus-within {
   outline: 2px solid color-mix(in srgb, var(--primary, #4f46e5) 60%, transparent);
   outline-offset: 1px;
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-ui-style="azon"] [data-testid="sidebar-row-card"],
+  [data-ui-style="azon"] [data-slot="sidebar-row-card"],
   [data-ui-style="azon"] [data-slot="composer-shell"] {
     transition: none;
   }
 }
-[data-ui-style="azon"] [data-testid="sidebar-row-card"]:hover {
+[data-ui-style="azon"] [data-slot="sidebar-row-card"]:hover {
   border-color: color-mix(in srgb, var(--primary, #4f46e5) 40%, var(--border, #e4e4e7));
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.07);
 }
-[data-ui-style="azon"] [data-testid="sidebar-row-card"][aria-current="page"] {
+[data-ui-style="azon"] [data-slot="sidebar-row-card"][aria-current="page"] {
   border-color: var(--primary, #4f46e5);
   box-shadow:
     inset 3px 0 0 var(--primary, #4f46e5),
@@ -2687,9 +2687,7 @@ code {
 [data-ui-style="azon"] [data-slot="sidebar-group"] ul {
   gap: 0.25rem;
 }
-[data-ui-style="azon"]
-  [aria-label="Azon navigation"]
-  [data-sidebar="menu-button"][aria-current="page"] {
+[data-ui-style="azon"] [data-azon-nav] [data-sidebar="menu-button"][aria-current="page"] {
   background: color-mix(in srgb, var(--primary, #4f46e5) 12%, transparent);
   color: var(--primary, #4f46e5);
   font-weight: 600;
@@ -2745,7 +2743,9 @@ code {
   padding-inline-end: 0.5rem;
   border-inline-end: 1px solid var(--border, #e4e4e7);
 }
-[data-ui-style="azon"] [data-chat-composer-primary-actions-compact="false"] button.h-9 {
+[data-ui-style="azon"]
+  [data-chat-composer-primary-actions-compact="false"]
+  [data-chat-send-button] {
   min-width: 5.75rem;
   justify-content: center;
 }
@@ -2787,7 +2787,7 @@ code {
 }
 
 /* Empty state headline. */
-[data-ui-style="azon"] [data-slot="sidebar-inset"] h1.text-center {
+[data-ui-style="azon"] [data-slot="sidebar-inset"] [data-draft-hero-title] {
   font-weight: 600;
   letter-spacing: -0.03em;
 }

@@ -363,7 +363,7 @@ export const SidebarAzonNav = memo(function SidebarAzonNav() {
     },
   ];
   return (
-    <nav aria-label="Azon navigation">
+    <nav aria-label="Azon navigation" data-azon-nav>
       <SidebarMenu className="flex-col items-stretch">
         {items.map((item) => (
           <SidebarMenuItem key={item.key} className="min-w-0">
