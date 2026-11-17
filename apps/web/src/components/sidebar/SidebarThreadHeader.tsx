@@ -11,7 +11,7 @@ import { cn } from "~/lib/utils";
 import { useUiStyle } from "../../hooks/useSettings";
 import { Button } from "../ui/button";
 import { SidebarInput, SidebarMenuButton } from "../ui/sidebar";
-import { SidebarAzonNav } from "./SidebarChrome";
+import { AzonSidebarHeader } from "./AzonSidebarHeader";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 
 export interface SidebarThreadHeaderProps {
@@ -100,42 +100,16 @@ export function SidebarThreadHeader({
 
   if (azonLayout) {
     return (
-      <div className="flex flex-col gap-2">
-        <Button
-          type="button"
-          variant="default"
-          size="sm"
-          className="w-full justify-start"
-          disabled={newThreadDisabled}
-          aria-label={newThreadLabel}
-          onClick={onNewThread}
-        >
-          <SquarePenIcon className="size-4" />
-          <span className="truncate">New thread</span>
-          {newThreadShortcutLabel ? (
-            <span className="ms-auto shrink-0 text-xs font-normal opacity-80">
-              {newThreadShortcutLabel}
-            </span>
-          ) : null}
-        </Button>
-        {searchBox}
-        <SidebarAzonNav />
-        {hasProjects ? (
-          <div className="flex items-center gap-1">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="min-w-0 flex-1 justify-start"
-              onClick={onNewProject}
-            >
-              <FolderPlusIcon className="size-4" />
-              <span className="truncate">Add project</span>
-            </Button>
-            {projectScope}
-          </div>
-        ) : null}
-      </div>
+      <AzonSidebarHeader
+        hasProjects={hasProjects}
+        projectScope={projectScope}
+        onNewProject={onNewProject}
+        onNewThread={onNewThread}
+        newThreadDisabled={newThreadDisabled}
+        newThreadLabel={newThreadLabel}
+        newThreadShortcutLabel={newThreadShortcutLabel}
+        searchBox={searchBox}
+      />
     );
   }
 
