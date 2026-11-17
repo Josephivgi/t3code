@@ -146,7 +146,7 @@ function HistoryNavigationButton({
       <TooltipTrigger
         render={
           <Button
-            aria-label={label}
+            aria-label={azonLayout ? (direction === "back" ? "Back" : "Next") : label}
             className={cn(
               "[-webkit-app-region:no-drag]",
               onBackdrop && "relative top-auto translate-y-0",
@@ -333,7 +333,7 @@ export const SidebarAzonNav = memo(function SidebarAzonNav() {
       key: "threads",
       label: "Threads",
       icon: <MessagesSquareIcon />,
-      active: !isSidebarUtilityPage(pathname),
+      active: !isSidebarUtilityPage(pathname) && !pathname.startsWith("/usage"),
       onClick: () => {
         closeMobileSidebar();
         void navigateToMainApp();

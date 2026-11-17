@@ -121,6 +121,8 @@ export const ChatHeader = memo(function ChatHeader({
   useEffect(() => {
     const list = breadcrumbContainerRef.current?.querySelector("ol");
     if (!list || !parentThreadLink) return;
+    // Azon stacks the breadcrumb in a column, so a summed-width check does not apply.
+    if (azonLayout) return;
     const measure = () => {
       const gap = Number.parseFloat(getComputedStyle(list).columnGap) || 0;
       const width = Array.from(list.children).reduce(
@@ -154,6 +156,7 @@ export const ChatHeader = memo(function ChatHeader({
     activeProjectName,
     activeThreadTitle,
     parentThreadLink,
+    azonLayout,
     interfaceFont,
     isRenamingTitle,
   ]);
@@ -302,11 +305,11 @@ export const ChatHeader = memo(function ChatHeader({
                 >
                   <WorkspaceBreadcrumbText
                     aria-hidden
-                    className={collapseParentTitle ? "w-0" : undefined}
+                    className={collapseParentTitle && !azonLayout ? "w-0" : undefined}
                   >
                     {parentThreadLink.title}
                   </WorkspaceBreadcrumbText>
-                  {collapseParentTitle ? (
+                  {collapseParentTitle && !azonLayout ? (
                     <span aria-hidden data-parent-breadcrumb-ellipsis>
                       ...
                     </span>

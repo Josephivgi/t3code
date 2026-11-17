@@ -498,7 +498,7 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
                   className={cn(
                     "flex min-h-0 flex-col bg-muted/40 max-sm:h-64 max-sm:w-full max-sm:border-t max-sm:border-l-0",
                     azonLayout
-                      ? "h-36 w-full shrink-0 overflow-y-auto border-t border-border/70"
+                      ? "max-h-36 min-h-20 w-full shrink-0 overflow-y-auto border-t border-border/70"
                       : "w-48 border-l border-border/70 sm:shrink-0",
                   )}
                   data-effort-placement={azonLayout ? "below" : "side"}
