@@ -64,6 +64,7 @@ import {
 import { useAvailableSettingsSearchItems } from "./useAvailableSettingsSearchItems";
 import { handleSettingsSectionKeyDown } from "./settingsSectionNavigation";
 import { workspaceAreaProps } from "../../lib/workspaceFocus";
+import { safeDecode } from "../../plugins/pluginCss";
 
 const SnapShotIcon = createLucideIcon("snap-shot", [
   [
@@ -155,7 +156,7 @@ export function SettingsSidebarNav({ pathname }: { pathname: string }) {
   const toolSegment = pathname.startsWith("/settings/small-tools/")
     ? pathname.slice("/settings/small-tools/".length)
     : null;
-  const activeToolKey = toolSegment === null ? null : decodeURIComponent(toolSegment);
+  const activeToolKey = toolSegment === null ? null : safeDecode(toolSegment);
   const searchableItems = useAvailableSettingsSearchItems();
   const results = searchSettings(query, searchableItems, m);
   const isSearching = query.trim().length > 0;

@@ -10,4 +10,10 @@ describe("clampPluginCss", () => {
       ".a{z-index: min(60, 40)}.b { z-index: min(99999, 40) !important; color:red }.c{z-index: min(5, 40)}",
     );
   });
+
+  it("leaves z-index keywords alone", () => {
+    expect(clampPluginCss(".a{z-index:auto}.b{z-index: inherit !important}")).toBe(
+      ".a{z-index:auto}.b{z-index: inherit !important}",
+    );
+  });
 });
