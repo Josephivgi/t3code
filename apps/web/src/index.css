@@ -2745,3 +2745,15 @@ code {
 [data-ui-style="azon"] [data-slot="sidebar-inset"] > * h1 {
   letter-spacing: -0.02em;
 }
+
+[data-ui-style="azon"] [aria-label="Thread breadcrumb"] h2 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+[data-ui-style="azon"] [aria-label="Thread breadcrumb"] button[aria-label^="New thread in"] {
+  padding: 0.125rem 0.625rem;
+  border: 1px solid var(--border, #e4e4e7);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted, #f4f4f5) 60%, transparent);
+}

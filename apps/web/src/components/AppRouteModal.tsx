@@ -3,6 +3,7 @@ import { XIcon } from "lucide-react";
 import { useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { useNativeTitlebarHeight } from "../lib/windowControlsOverlay";
+import { useUiStyle } from "../hooks/useSettings";
 import { useCloseAppModal } from "./sidebar/mainAppLocation";
 import { Button } from "./ui/button";
 import { DialogBackdrop } from "./ui/dialog";
@@ -87,17 +88,19 @@ export function AppRouteModal({ label, children }: { label: string; children: Re
 }
 
 export function AppRouteModalClose() {
+  const azonLayout = useUiStyle() === "azon";
   return (
     <Tooltip>
       <TooltipTrigger
         render={
           <DialogPrimitive.Close
             aria-label="Close"
-            render={<Button size="icon-sm" variant="ghost" />}
+            render={<Button size={azonLayout ? "sm" : "icon-sm"} variant="ghost" />}
           />
         }
       >
         <XIcon />
+        {azonLayout ? <span>Close</span> : null}
       </TooltipTrigger>
       <TooltipPopup side="bottom">Close (Esc)</TooltipPopup>
     </Tooltip>

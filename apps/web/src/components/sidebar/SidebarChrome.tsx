@@ -132,6 +132,7 @@ function HistoryNavigationButton({
   direction: HistoryDirection;
   onBackdrop: boolean;
 }) {
+  const azonLayout = useUiStyle() === "azon";
   const keybindings = useAtomValue(primaryServerKeybindingsAtom);
   const enabled = useCanNavigateHistory(direction);
   const label = direction === "back" ? "Go back" : "Go forward";
@@ -152,12 +153,15 @@ function HistoryNavigationButton({
             )}
             disabled={!enabled}
             onClick={() => navigateHistory(direction)}
-            size="icon-sm"
+            size={azonLayout ? "sm" : "icon-sm"}
             variant={onBackdrop ? "media-navigation" : "ghost"}
           />
         }
       >
         <Icon className="size-3.5" />
+        {azonLayout ? (
+          <span className="text-xs">{direction === "back" ? "Back" : "Next"}</span>
+        ) : null}
       </TooltipTrigger>
       <TooltipPopup side="bottom">
         {label}
