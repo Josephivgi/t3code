@@ -33,7 +33,7 @@ import {
 } from "./ThreadDetailsUsage";
 import { ThreadDetailsItemsMenuItems } from "./ThreadDetailsItemsMenu";
 import { resolveThreadDetailsVisibility, THREAD_DETAILS_ITEMS } from "./threadDetailsItems";
-import { useClientSettings } from "../../hooks/useSettings";
+import { useClientSettings, useUiStyle } from "../../hooks/useSettings";
 import { useProject, useServerConfigs } from "../../state/entities";
 import { ThreadDetailsThreadPrRows } from "./ThreadDetailsPrRows";
 import { cn } from "../../lib/utils";
@@ -94,6 +94,7 @@ interface ThreadDetailsPanelProps extends Pick<
 }
 
 export function ThreadDetailsPanel(props: ThreadDetailsPanelProps) {
+  const azonLayout = useUiStyle() === "azon";
   const visible = useClientSettings(resolveThreadDetailsVisibility);
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
   const fileScripts = useT3ProjectFileScripts(
@@ -185,7 +186,7 @@ export function ThreadDetailsPanel(props: ThreadDetailsPanelProps) {
                   headingId="thread-details-workspace-heading"
                   title="Workspace"
                   separated={false}
-                  showHeading={false}
+                  showHeading={azonLayout}
                 >
                   <div className="flex flex-col">
                     {show.environment ? (
@@ -234,7 +235,7 @@ export function ThreadDetailsPanel(props: ThreadDetailsPanelProps) {
                 <ThreadDetailsSection
                   headingId="thread-details-version-control-heading"
                   title="Version Control"
-                  showHeading={false}
+                  showHeading={azonLayout}
                   separated={density === "full"}
                 >
                   <div className="flex flex-col">
