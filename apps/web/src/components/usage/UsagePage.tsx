@@ -766,7 +766,7 @@ function UsageOverview({
         </div>
 
         <div className="flex min-w-0 flex-col gap-3">
-          <h2 className="text-sm font-medium text-foreground">
+          <h2 data-section-title className="text-sm font-medium text-foreground">
             {shownHourly ? "Hourly" : "Daily"} {metric === "tokens" ? "processed tokens" : "cost"}
           </h2>
           <UsageProviderChart
@@ -786,7 +786,9 @@ function UsageOverview({
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-medium text-foreground">Totals</h2>
+        <h2 data-section-title className="text-sm font-medium text-foreground">
+          Totals
+        </h2>
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 py-1 md:grid-cols-5">
           <Metric
             loading={loadingPartial}
@@ -848,7 +850,9 @@ function UsageOverview({
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-sm font-medium text-foreground">Breakdown</h2>
+          <h2 data-section-title className="text-sm font-medium text-foreground">
+            Breakdown
+          </h2>
           <ToggleGroup
             aria-label="Usage breakdown"
             variant="segmented"
@@ -1342,7 +1346,9 @@ function UsageSkeleton() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-medium text-foreground">Totals</h2>
+        <h2 data-section-title className="text-sm font-medium text-foreground">
+          Totals
+        </h2>
         <MetricSkeletons
           labels={["Processed tokens", "Cached input", "Uncached input", "Output", "Cache savings"]}
         />
@@ -1358,7 +1364,9 @@ function UsageSkeleton() {
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-sm font-medium text-foreground">Breakdown</h2>
+          <h2 data-section-title className="text-sm font-medium text-foreground">
+            Breakdown
+          </h2>
           <Skeleton shape="card" className="h-7 w-28" />
         </div>
         <Skeleton className="h-44" />

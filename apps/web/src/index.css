@@ -2833,3 +2833,21 @@ code {
     transition: none;
   }
 }
+
+/* Usage section titles and dialogs share the Settings look. */
+[data-ui-style="azon"] [data-section-title] {
+  border-inline-start: 3px solid var(--primary);
+  padding-inline-start: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+[data-ui-style="azon"] [data-slot="dialog-popup"] {
+  border-radius: 1rem;
+}
+[data-ui-style="azon"] [data-slot="dialog-title"] {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+[data-ui-style="azon"] [data-slot="dialog-footer"] {
+  border-top: 1px solid var(--border);
+}
