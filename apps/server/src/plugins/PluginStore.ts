@@ -307,29 +307,29 @@ export const layer = Layer.effect(
     });
 
     /** Relative paths of a plugin folder's files, build output folders left out. */
-    const walkFiles = (id: PluginId): Effect.Effect<ReadonlyArray<string>> =>
-      Effect.gen(function* () {
-        const found: string[] = [];
-        const visit = (relative: string): Effect.Effect<void> =>
-          Effect.gen(function* () {
-            const names = yield* fs
-              .readDirectory(path.join(pluginDir(id), relative))
-              .pipe(Effect.orElseSucceed((): ReadonlyArray<string> => []));
-            for (const name of names) {
-              if (found.length >= MAX_LISTED_FILES) return;
-              const entry = relative === "" ? name : `${relative}/${name}`;
-              const info = yield* fs.stat(path.join(pluginDir(id), entry)).pipe(Effect.option);
-              if (info._tag === "None") continue;
-              if (info.value.type === "Directory") {
-                if (!UNCOUNTED_FOLDERS.has(name)) yield* visit(entry);
-              } else {
-                found.push(entry);
-              }
+    const walkFiles = Effect.fn("PluginStore.walkFiles")(function* (id: PluginId) {
+      const found: string[] = [];
+      const visit: (relative: string) => Effect.Effect<void> = Effect.fn("PluginStore.walkVisit")(
+        function* (relative: string) {
+          const names = yield* fs
+            .readDirectory(path.join(pluginDir(id), relative))
+            .pipe(Effect.orElseSucceed((): ReadonlyArray<string> => []));
+          for (const name of names) {
+            if (found.length >= MAX_LISTED_FILES) return;
+            const entry = relative === "" ? name : `${relative}/${name}`;
+            const info = yield* fs.stat(path.join(pluginDir(id), entry)).pipe(Effect.option);
+            if (info._tag === "None") continue;
+            if (info.value.type === "Directory") {
+              if (!UNCOUNTED_FOLDERS.has(name)) yield* visit(entry);
+            } else {
+              found.push(entry);
             }
-          });
-        yield* visit("");
-        return found;
-      });
+          }
+        },
+      );
+      yield* visit("");
+      return found as ReadonlyArray<string>;
+    });
 
     /** Bytes in the plugin folder, leaving out files named in `replaced`. */
     const folderBytes = Effect.fn("PluginStore.folderBytes")(function* (
@@ -524,15 +524,13 @@ export const layer = Layer.effect(
           `The plugin "${id}" has no method "${method}". Its server.js registers methods with handle(), and loads when the server starts.`,
         );
       }
-      return yield* Effect.promise(
-        async (): Promise<PluginCallResult> => {
-          try {
-            return { ok: true, result: (await handler(args)) ?? null };
-          } catch (cause) {
-            return { ok: false, error: errorMessage(cause) };
-          }
-        },
-      );
+      return yield* Effect.promise(async (): Promise<PluginCallResult> => {
+        try {
+          return { ok: true, result: (await handler(args)) ?? null };
+        } catch (cause) {
+          return { ok: false, error: errorMessage(cause) };
+        }
+      });
     });
 
     const setState = Effect.fn("PluginStore.setState")(function* (
@@ -676,9 +674,7 @@ export const layer = Layer.effect(
         catch: (cause) =>
           new PluginActivationError({
             message: errorMessage(cause),
-            ...(cause instanceof Error && cause.stack !== undefined
-              ? { stack: cause.stack }
-              : {}),
+            ...(cause instanceof Error && cause.stack !== undefined ? { stack: cause.stack } : {}),
           }),
       }).pipe(
         Effect.as(undefined),
@@ -753,7 +749,6 @@ export const layer = Layer.effect(
 
       yield* updateState((current) => ({ ...current, serverBootPending: [] }));
     });
-
 
     /**
      * Dev loop: files in a plugin folder that change on disk apply without a restart. A changed
