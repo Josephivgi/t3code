@@ -16,7 +16,7 @@ export function clampPluginCss(css: string): string {
     /z-index\s*:\s*([^;}!]+?)\s*(!important)?\s*(?=[;}]|$)/gi,
     (match, value: string, important: string | undefined) =>
       /^(auto|inherit|initial|revert|revert-layer|unset)$/i.test(value.trim()) ||
-      value.trim().endsWith(`, ${PLUGIN_MAX_Z_INDEX})`)
+      /,\s*40\)$/.test(value.trim())
         ? match
         : `z-index: min(${value.trim()}, ${PLUGIN_MAX_Z_INDEX})${important ? " !important" : ""}`,
   );

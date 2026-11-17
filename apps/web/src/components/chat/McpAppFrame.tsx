@@ -36,6 +36,7 @@ import { useTurnItemDetail } from "~/state/queries";
 import { mcpAppEnvironment } from "~/state/mcpApps";
 import { useAtomCommand } from "~/state/use-atom-command";
 import { observeResize } from "~/lib/observeResize";
+import { allowAppTopLayer } from "~/plugins/overlapGuard";
 
 const commandFailure = (result: {
   readonly cause: Parameters<typeof squashAtomCommandFailure>[0]["cause"];
@@ -189,7 +190,7 @@ export function McpAppFrame(props: {
   const attachFullscreenChrome = (chrome: HTMLDivElement) => {
     const box = chrome.parentElement;
     if (box === null) return;
-    box.setAttribute("data-app-top-layer", "");
+    allowAppTopLayer(box);
     if (!box.matches(":popover-open")) box.showPopover();
     readLive().props.onFullscreenChange?.(true);
     return () => {

@@ -42,7 +42,19 @@ it("keeps an open Settings-style dialog above a plugin panel that asks for the t
 });
 
 it("guard caps inline z-index, clamps added style elements, and blocks the top layer", async () => {
+  vi.stubEnv("DEV", false);
   installPluginOverlapGuard();
+  const calcEl = document.createElement("div");
+  document.body.append(calcEl);
+  calcEl.style.zIndex = "calc(1000 + 1)";
+  const popover = document.createElement("div");
+  popover.setAttribute("popover", "manual");
+  document.body.append(popover);
+  popover.togglePopover();
+  expect(popover.matches(":popover-open")).toBe(false);
+  await vi.waitFor(() => expect(calcEl.style.zIndex).toBe("40"));
+  calcEl.remove();
+  popover.remove();
   const inline = document.createElement("div");
   document.body.append(inline);
   inline.style.zIndex = "2147483647";
