@@ -1,5 +1,8 @@
 import type { PluginFailure, PluginPhase, PluginSummary } from "@t3tools/contracts";
+import { RefreshCwIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
+
+import { useUiStyle } from "../../hooks/useSettings";
 
 import {
   deletePlugin,
@@ -91,6 +94,7 @@ function PluginCard({
   onToggle: (enabled: boolean) => void;
   onDelete: () => void;
 }) {
+  const azonLayout = useUiStyle() === "azon";
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const unreadable = plugin.failure?.phase === "manifest";
   const parts = [
@@ -158,10 +162,11 @@ function PluginCard({
         ) : (
           <Button
             size="sm"
-            variant="ghost"
+            variant={azonLayout ? "ghost-destructive" : "ghost"}
             disabled={busy}
             onClick={() => setConfirmingDelete(true)}
           >
+            {azonLayout ? <Trash2Icon className="size-3.5" /> : null}
             Delete…
           </Button>
         )}
@@ -171,6 +176,7 @@ function PluginCard({
 }
 
 export function PluginsSettingsPanel() {
+  const azonLayout = useUiStyle() === "azon";
   // The plugin host refreshes this list when plugins change, including ones an agent writes.
   const list = useSyncExternalStore(subscribePluginList, getPluginList);
   const [error, setError] = useState<string | null>(null);
@@ -241,11 +247,27 @@ export function PluginsSettingsPanel() {
       <SettingsSection
         id="plugins"
         title="Plugins"
-        titleAction={
-          <Button size="sm" variant="ghost" disabled={loading} onClick={() => void reload()}>
-            {loading ? "Refreshing…" : "Refresh"}
-          </Button>
-        }
+        {...(azonLayout
+          ? {
+              headerAction: (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={loading}
+                  onClick={() => void reload()}
+                >
+                  <RefreshCwIcon className="size-3.5" />
+                  {loading ? "Refreshing…" : "Refresh"}
+                </Button>
+              ),
+            }
+          : {
+              titleAction: (
+                <Button size="sm" variant="ghost" disabled={loading} onClick={() => void reload()}>
+                  {loading ? "Refreshing…" : "Refresh"}
+                </Button>
+              ),
+            })}
       >
         <p className="px-4 py-3 text-sm text-muted-foreground">
           Plugins change how Azon Beta looks and works. Plugin code runs inside the app with the
