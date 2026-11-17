@@ -89,6 +89,11 @@ const buildCmd = Command.make(
         }),
       );
 
+      yield* fs.copy(
+        path.join(serverDir, "bundled-plugins"),
+        path.join(serverDir, "dist/bundled-plugins"),
+      );
+
       const webDist = path.join(repoRoot, "apps/web/dist");
       const clientTarget = path.join(serverDir, "dist/client");
 

@@ -1,0 +1,25 @@
+#t3-sync-root{position:fixed;right:12px;bottom:12px;z-index:39;font:12px/1.4 system-ui,sans-serif;color:var(--foreground,#ddd)}
+#t3-sync-root .t3s-btn{padding:5px 10px;border-radius:8px;border:1px solid var(--border,#444);background:var(--card,#222);color:inherit;cursor:pointer}
+#t3-sync-root .t3s-btn[data-state=working]{border-color:#3b82f6}
+#t3-sync-root .t3s-btn[data-state=waiting]{border-color:#f59e0b}
+#t3-sync-root .t3s-panel{position:absolute;right:0;bottom:36px;width:380px;max-width:92vw;height:480px;max-height:70vh;display:flex;flex-direction:column;border:1px solid var(--border,#444);border-radius:10px;background:var(--background,#181818);box-shadow:0 8px 28px #0008;overflow:hidden}
+#t3-sync-root .t3s-panel[hidden]{display:none}
+#t3-sync-root .t3s-head{display:flex;gap:6px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--border,#444)}
+#t3-sync-root .t3s-title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#t3-sync-root .t3s-head button{border:1px solid var(--border,#444);background:none;color:inherit;border-radius:6px;padding:2px 8px;cursor:pointer}
+#t3-sync-root .t3s-head button[hidden]{display:none}
+#t3-sync-root .t3s-body{flex:1;overflow:auto;padding:6px}
+#t3-sync-root .t3s-row{display:block;width:100%;text-align:left;border:0;background:none;color:inherit;padding:6px 8px;border-radius:6px;cursor:pointer}
+#t3-sync-root .t3s-row:hover{background:var(--accent,#2a2a2a)}
+#t3-sync-root .t3s-top{display:flex;gap:6px;align-items:baseline}
+#t3-sync-root .t3s-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+#t3-sync-root .t3s-age,#t3-sync-root .t3s-sub{opacity:.6}
+#t3-sync-root .t3s-sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#t3-sync-root .t3s-st{font-size:10px;text-transform:uppercase}
+#t3-sync-root .t3s-st-working{color:#3b82f6}
+#t3-sync-root .t3s-st-waiting{color:#f59e0b}
+#t3-sync-root .t3s-msg{margin:6px 0;padding:6px 8px;border-radius:6px;background:var(--card,#222)}
+#t3-sync-root .t3s-user{border-left:3px solid #888}
+#t3-sync-root .t3s-role{opacity:.6;font-size:10px;text-transform:uppercase}
+#t3-sync-root .t3s-text{white-space:pre-wrap;word-break:break-word}
+#t3-sync-root .t3s-empty{padding:16px;opacity:.7}

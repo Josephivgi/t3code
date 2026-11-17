@@ -1,0 +1,1 @@
+{"id":"t3-sync","name":"T3 Code sync","version":"1.0.0","description":"Shows T3 Code's threads, with working and waiting status, inside Azon (read-only).","supports":["azon","t3code"]}

@@ -1,0 +1,7 @@
+{
+  "id": "app-launcher",
+  "name": "App Launcher",
+  "version": "1.0.0",
+  "description": "Adds an App Launcher button to the sidebar footer. Launch your apps, websites and commands, and import the ones already set up in App Launcher.",
+  "supports": ["azon", "t3code"]
+}

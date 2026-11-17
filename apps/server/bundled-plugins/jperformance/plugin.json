@@ -1,0 +1,7 @@
+{
+  "id": "jperformance",
+  "name": "JPerformance",
+  "version": "1.2.1",
+  "description": "JPerformance Unified inside Azon Beta, in Settings > Small tools. The Rust code is in native/.",
+  "supports": ["azon", "t3code"]
+}

@@ -15,7 +15,7 @@ import * as NodeHttp from "node:http";
 import * as NodeHttpServer from "@effect/platform-node/NodeHttpServer";
 import * as NodeCrypto from "@effect/platform-node/NodeCrypto";
 import * as NodeServices from "@effect/platform-node/NodeServices";
-import { EnvironmentHttpApi, type RepositoryIdentity } from "@t3tools/contracts";
+import { EnvironmentHttpApi, PluginId, type RepositoryIdentity } from "@t3tools/contracts";
 import * as HostProcess from "@t3tools/shared/HostProcess";
 import * as Cause from "effect/Cause";
 import * as Duration from "effect/Duration";
@@ -106,6 +106,7 @@ import * as GitManager from "./git/GitManager.ts";
 import * as EnvironmentTheme from "./environmentTheme.ts";
 import * as PluginStore from "./plugins/PluginStore.ts";
 import * as PluginHttp from "./plugins/http.ts";
+import { seedBundledPlugins, STARTS_DISABLED } from "./plugins/bundledPlugins.ts";
 import * as Keybindings from "./keybindings.ts";
 import * as ServerRuntimeStartup from "./serverRuntimeStartup.ts";
 import * as ServerOwnership from "./serverOwnership.ts";
@@ -857,7 +858,17 @@ const layerMakeRoutes = Layer.mergeAll(
   Layer.effectDiscard(
     PluginStore.PluginStore.pipe(
       Effect.flatMap((store) =>
-        store.activateServerPlugins.pipe(Effect.andThen(store.watchServerPlugins)),
+        seedBundledPlugins().pipe(
+          Effect.flatMap((copied) =>
+            Effect.forEach(
+              copied.filter((id) => STARTS_DISABLED.has(id)),
+              (id) => store.setState(PluginId.make(id), { enabled: false }),
+            ),
+          ),
+          Effect.catch((cause) => Effect.logWarning("Bundled plugins could not be seeded.", cause)),
+          Effect.andThen(store.activateServerPlugins),
+          Effect.andThen(store.watchServerPlugins),
+        ),
       ),
       Effect.catch((cause) => Effect.logWarning("Server plugins could not be loaded.", cause)),
       Effect.forkDetach,
