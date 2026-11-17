@@ -107,10 +107,16 @@ export function SidebarThreadHeader({
           size="sm"
           className="w-full justify-start"
           disabled={newThreadDisabled}
+          aria-label={newThreadLabel}
           onClick={onNewThread}
         >
           <SquarePenIcon className="size-4" />
-          <span className="truncate">{newThreadLabel}</span>
+          <span className="truncate">New thread</span>
+          {newThreadShortcutLabel ? (
+            <span className="ms-auto shrink-0 text-xs font-normal opacity-80">
+              {newThreadShortcutLabel}
+            </span>
+          ) : null}
         </Button>
         {searchBox}
         <SidebarAzonNav />

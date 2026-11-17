@@ -3704,7 +3704,9 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
                 )}
               >
                 {composerAttachButton && !dictationTakesFooter ? (
-                  <div className="me-2">{composerAttachButton}</div>
+                  <div className="me-2" data-chat-composer-attach>
+                    {composerAttachButton}
+                  </div>
                 ) : null}
                 <div
                   data-chat-composer-actions="right"

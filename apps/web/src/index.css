@@ -2664,6 +2664,16 @@ code {
     border-color 120ms,
     box-shadow 120ms;
 }
+[data-ui-style="azon"] [data-testid="sidebar-row-card"]:focus-within {
+  outline: 2px solid color-mix(in srgb, var(--primary, #4f46e5) 60%, transparent);
+  outline-offset: 1px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-ui-style="azon"] [data-testid="sidebar-row-card"],
+  [data-ui-style="azon"] [data-slot="composer-shell"] {
+    transition: none;
+  }
+}
 [data-ui-style="azon"] [data-testid="sidebar-row-card"]:hover {
   border-color: color-mix(in srgb, var(--primary, #4f46e5) 40%, var(--border, #e4e4e7));
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.07);
@@ -2730,7 +2740,7 @@ code {
   border-top: 1px solid var(--border, #e4e4e7);
   padding-top: 0.5rem;
 }
-[data-ui-style="azon"] [data-chat-composer-footer] > div.me-2 {
+[data-ui-style="azon"] [data-chat-composer-footer] [data-chat-composer-attach] {
   margin-inline-end: 0.5rem;
   padding-inline-end: 0.5rem;
   border-inline-end: 1px solid var(--border, #e4e4e7);

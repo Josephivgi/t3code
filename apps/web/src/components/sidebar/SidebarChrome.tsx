@@ -298,7 +298,6 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
             <SidebarUtilityItem
               icon={<PullRequestGlyph.pullRequest />}
               label="Pull requests"
-              labeled={azonLayout}
               onClick={handlePullRequestsClick}
             />
           ) : null}
@@ -306,7 +305,6 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
             <SidebarUtilityItem
               icon={<ChartNoAxesColumnIcon />}
               label="Usage"
-              labeled={azonLayout}
               onClick={handleUsageClick}
             />
           )}
