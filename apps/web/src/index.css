@@ -2791,3 +2791,45 @@ code {
   font-weight: 600;
   letter-spacing: -0.03em;
 }
+
+/* Settings: section headers with an accent, card groups, roomier rows, labeled nav groups. */
+[data-ui-style="azon"] [data-slot="settings-section-header"] h2 {
+  border-inline-start: 3px solid var(--primary);
+  padding-inline-start: 0.625rem;
+  font-size: 0.9375rem;
+  letter-spacing: -0.005em;
+}
+[data-ui-style="azon"] [data-slot="settings-group"] {
+  border-radius: 1rem;
+  border-color: var(--border);
+  background: var(--card, var(--background));
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
+}
+[data-ui-style="azon"] [data-slot="settings-row"] {
+  padding-block: 0.875rem;
+  transition: background-color 120ms;
+}
+[data-ui-style="azon"] [data-slot="settings-row"]:hover {
+  background: color-mix(in srgb, var(--foreground) 3%, transparent);
+}
+[data-ui-style="azon"] [data-slot="settings-row"] h3 {
+  font-weight: 600;
+}
+[data-ui-style="azon"] [data-slot="settings-nav-heading"] {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+[data-ui-style="azon"] [data-settings-section] {
+  height: 2.25rem;
+}
+[data-ui-style="azon"] [data-settings-section][aria-current="page"] {
+  box-shadow: inset 3px 0 0 var(--primary);
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-ui-style="azon"] [data-slot="settings-row"] {
+    transition: none;
+  }
+}

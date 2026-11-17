@@ -227,6 +227,7 @@ export function SettingsSection({
 
   return (
     <section
+      data-slot="settings-section"
       {...sectionProps}
       ref={targetRef}
       tabIndex={sectionProps.id ? -1 : sectionProps.tabIndex}
@@ -237,6 +238,7 @@ export function SettingsSection({
       ) : (
         <div
           data-settings-scroll-target
+          data-slot="settings-section-header"
           className="flex min-h-7 items-start justify-between gap-4 px-3 sm:px-4"
         >
           <div className="flex min-w-0 items-center gap-1">

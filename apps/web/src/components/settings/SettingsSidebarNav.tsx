@@ -401,6 +401,7 @@ export function SettingsSidebarNav({ pathname }: { pathname: string }) {
                     >
                       <h3
                         id={`settings-nav-group-${index}`}
+                        data-slot="settings-nav-heading"
                         className={cn(
                           "px-2 text-xs font-medium text-sidebar-muted-foreground/80",
                           group.headingHidden ? "sr-only" : !compactSearchOpen && "max-md:sr-only",
