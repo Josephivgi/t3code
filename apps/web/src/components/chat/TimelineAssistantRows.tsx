@@ -32,6 +32,7 @@ import { readThreadTurnItems } from "../../state/entities";
 import { useV2ItemSupport } from "../../state/v2ItemSupport";
 import { TimelineRowCtx, TimelineRowActivityCtx, type TimelineRow } from "./timelineRowContext";
 import { MESSAGE_HEADING_LEVEL, MessageAuthorHeading } from "./TimelineRowParts";
+import { useUiStyle } from "../../hooks/useSettings";
 
 export function AssistantTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" }> }) {
   const ctx = use(TimelineRowCtx);
@@ -47,7 +48,7 @@ export function AssistantTimelineRow({ row }: { row: Extract<TimelineRow, { kind
   return (
     <>
       <div className="relative min-w-0 px-1 py-0.5">
-        <MessageAuthorHeading>T3 Code</MessageAuthorHeading>
+        <MessageAuthorHeading>Azon Beta</MessageAuthorHeading>
         <div data-thread-find-text="true">
           <AssistantCitationSource
             messageId={row.message.id}
@@ -113,7 +114,7 @@ export function SentMessageTimelineRow({
 
   return (
     <div className="min-w-0 px-1 py-0.5">
-      <MessageAuthorHeading>T3 Code</MessageAuthorHeading>
+      <MessageAuthorHeading>Azon Beta</MessageAuthorHeading>
       {/* Sent messages have no message id; citations name their turn item instead. */}
       <AssistantCitationSource
         messageId={MessageId.make(row.id)}
@@ -143,6 +144,7 @@ function AssistantForkButton({
 }: {
   readonly projectedItem: NonNullable<Extract<TimelineRow, { kind: "message" }>["projectedItem"]>;
 }) {
+  const azonLayout = useUiStyle() === "azon";
   const ctx = use(TimelineRowCtx);
   const [busy, setBusy] = useState(false);
   const support = useV2ItemSupport({
@@ -179,6 +181,7 @@ function AssistantForkButton({
         }
       >
         <GitForkIcon className={cn("size-3", busy && "animate-pulse")} />
+        {azonLayout ? <span>Fork</span> : null}
       </TooltipTrigger>
       <TooltipPopup side="top">Fork from this response</TooltipPopup>
     </Tooltip>
@@ -260,6 +263,7 @@ function AssistantMessageMeta({
 }
 
 function AssistantReplyButton({ message, itemId }: { message: ChatMessage; itemId: TurnItemId }) {
+  const azonLayout = useUiStyle() === "azon";
   const ctx = use(TimelineRowCtx);
   const { threadRef, onReplyToResponse } = ctx;
   if (!threadRef || !onReplyToResponse || !message.text.trim()) return null;
@@ -299,6 +303,7 @@ function AssistantReplyButton({ message, itemId }: { message: ChatMessage; itemI
         }
       >
         <ReplyIcon className="size-3" />
+        {azonLayout ? <span>Reply</span> : null}
       </TooltipTrigger>
       <TooltipPopup side="top">Reply to this response</TooltipPopup>
     </Tooltip>

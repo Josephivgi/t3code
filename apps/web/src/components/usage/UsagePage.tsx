@@ -1,4 +1,5 @@
 import { ChatGptUsageButton } from "../settings/ChatGptUsageButton";
+import { useUiStyle } from "../../hooks/useSettings";
 import { usesChatGptSharing } from "@t3tools/shared/usageLimits";
 import { RefreshIcon } from "~/components/ui/refresh-icon";
 import { useAtomValue } from "@effect/atom-react";
@@ -293,6 +294,7 @@ export function UsagePage() {
     return () => globalThis.window.removeEventListener("keydown", onUsageKeyDown, true);
   }, []);
 
+  const azonLayout = useUiStyle() === "azon";
   const refreshWindow = () => {
     if (refreshingRef.current) return;
 
@@ -430,10 +432,11 @@ export function UsagePage() {
           aria-label={showingLimits ? "Refresh limits" : "Refresh usage"}
           aria-busy={isRefreshing}
           disabled={isRefreshing || (!showingLimits && !canReadDiagnostics)}
-          size="icon-sm"
+          size={azonLayout ? "sm" : "icon-sm"}
           variant="ghost"
         >
           <RefreshIcon size="sm" refreshing={isRefreshing} />
+          {azonLayout ? <span>Refresh</span> : null}
         </Button>
       </div>
       <div className="ms-auto flex shrink-0 items-center justify-end gap-1 @4xl/usage-header:hidden">
@@ -491,10 +494,11 @@ export function UsagePage() {
           aria-label={showingLimits ? "Refresh limits" : "Refresh usage"}
           aria-busy={isRefreshing}
           disabled={isRefreshing || (!showingLimits && !canReadDiagnostics)}
-          size="icon-sm"
+          size={azonLayout ? "sm" : "icon-sm"}
           variant="ghost"
         >
           <RefreshIcon size="sm" refreshing={isRefreshing} />
+          {azonLayout ? <span>Refresh</span> : null}
         </Button>
       </div>
     </div>

@@ -38,6 +38,7 @@ export type SettingsPath =
   | "/settings/secrets"
   | "/settings/maintenance"
   | "/settings/labs"
+  | "/settings/plugins"
   | "/settings/about"
   | "/settings/archived";
 
@@ -113,6 +114,7 @@ export const SETTINGS_SECTION_LABELS: Readonly<Record<SettingsPath, string>> = {
   "/settings/secrets": msg("Secrets"),
   "/settings/maintenance": msg("Maintenance"),
   "/settings/labs": msg("Labs"),
+  "/settings/plugins": msg("Plugins"),
   "/settings/about": msg("About"),
   "/settings/voice": msg("Voice"),
   "/settings/archived": msg("Archive"),
@@ -162,7 +164,13 @@ export const SETTINGS_NAV_GROUPS: ReadonlyArray<{
   {
     heading: msg("More"),
     headingHidden: true,
-    paths: ["/settings/maintenance", "/settings/labs", "/settings/about", "/settings/archived"],
+    paths: [
+      "/settings/maintenance",
+      "/settings/labs",
+      "/settings/plugins",
+      "/settings/about",
+      "/settings/archived",
+    ],
   },
 ];
 
@@ -322,6 +330,13 @@ export const SETTINGS_SEARCH_ITEMS = [
     targetId: "appearance",
   },
   {
+    id: "plugins",
+    title: "Plugins",
+    to: "/settings/plugins",
+    searchTerms: ["plugins extensions mods style code turn on off broken failed delete reload"],
+    targetId: "plugins",
+  },
+  {
     // Prefixed because the slider control already owns the `appearance-contrast` id.
     id: "setting-appearance-contrast",
     title: "Contrast",
@@ -346,6 +361,12 @@ export const SETTINGS_SEARCH_ITEMS = [
     title: "Chat width",
     to: "/settings/appearance",
     searchTerms: ["wide full width column layout messages composer monitor"],
+  },
+  {
+    id: "ui-style",
+    title: "UI",
+    to: "/settings/appearance",
+    searchTerms: ["ui look style theme t3 code azon coming soon"],
   },
   {
     id: "thread-details-items",
@@ -1107,7 +1128,7 @@ export const SETTINGS_SEARCH_ITEMS = [
   },
   {
     id: "pull-request-links-open-in-app",
-    title: "Open pull requests in T3 Code",
+    title: "Open pull requests in Azon Beta",
     to: "/settings/diffs",
     searchTerms: [
       `pr commit links ${SOURCE_CONTROL_HOST_LABELS} browser external click default pull request view panel`,
@@ -1381,6 +1402,7 @@ const SETTINGS_CATEGORY_SCOPES: Readonly<Record<SettingsPath, SettingsSearchScop
   "/settings/general": null,
   "/settings/voice": null,
   "/settings/appearance": null,
+  "/settings/plugins": null,
   "/settings/chat": null,
   "/settings/diffs": null,
   "/settings/snap-shot": null,

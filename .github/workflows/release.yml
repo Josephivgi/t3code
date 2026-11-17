@@ -993,7 +993,8 @@ jobs:
           make_latest: ${{ needs.preflight.outputs.make_latest }}
           files: ${{ steps.release_files.outputs.files }}
           fail_on_unmatched_files: true
-          token: ${{ github.token }}
+          token: ${{ secrets.AZON_RELEASE_TOKEN }}
+          repository: Josephivgi/azon
 
       - name: Publish first release
         if: needs.preflight.outputs.previous_tag == ''
@@ -1009,7 +1010,8 @@ jobs:
           make_latest: ${{ needs.preflight.outputs.make_latest }}
           files: ${{ steps.release_files.outputs.files }}
           fail_on_unmatched_files: true
-          token: ${{ github.token }}
+          token: ${{ secrets.AZON_RELEASE_TOKEN }}
+          repository: Josephivgi/azon
 
       # The action keeps a stable release a draft until its assets finish uploading, but publishes a
       # prerelease first. Desktop clients update connected servers from the CLI archives as soon as
@@ -1019,8 +1021,8 @@ jobs:
       - name: Publish prerelease
         if: needs.preflight.outputs.is_prerelease == 'true' && needs.preflight.outputs.release_channel != 'preview'
         env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.AZON_RELEASE_TOKEN }}
+          GH_REPO: Josephivgi/azon
           RELEASE_TAG: ${{ needs.preflight.outputs.tag }}
         run: gh release edit "$RELEASE_TAG" --draft=false
 

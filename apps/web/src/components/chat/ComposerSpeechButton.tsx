@@ -1,4 +1,5 @@
 import type { VoiceInputState } from "@t3tools/client-runtime/voice-input";
+import { useUiStyle } from "../../hooks/useSettings";
 import { CheckIcon, MicIcon, XIcon } from "lucide-react";
 import { useEffect, useState, type PointerEvent, type ReactElement } from "react";
 
@@ -96,6 +97,7 @@ export function ComposerSpeechButton(props: {
   size?: "default" | "compact";
   onStart(): void;
 }) {
+  const azonLayout = useUiStyle() === "azon";
   if (props.state.phase !== "idle") return null;
   const label = "Start voice input";
 
@@ -103,7 +105,15 @@ export function ComposerSpeechButton(props: {
     <ShortcutTooltip label={label} shortcut={props.shortcutLabel}>
       <Button
         type="button"
-        size={props.size === "compact" ? "icon-xs" : "icon-sm"}
+        size={
+          azonLayout
+            ? props.size === "compact"
+              ? "xs"
+              : "sm"
+            : props.size === "compact"
+              ? "icon-xs"
+              : "icon-sm"
+        }
         variant="ghost"
         aria-label={label}
         disabled={props.disabled}
@@ -114,6 +124,7 @@ export function ComposerSpeechButton(props: {
         className="shrink-0"
       >
         <MicIcon />
+        {azonLayout ? <span className="text-xs">Voice</span> : null}
       </Button>
     </ShortcutTooltip>
   );

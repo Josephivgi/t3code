@@ -1,4 +1,5 @@
 import { memo, useRef } from "react";
+import { useUiStyle } from "../../hooks/useSettings";
 import { CheckIcon, CopyIcon, type LucideIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
@@ -26,6 +27,8 @@ export const MessageCopyButton = memo(function MessageCopyButton({
   className?: string;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
+  const azonLayout = useUiStyle() === "azon";
+  const azonText = label === "Copy message" ? "Copy" : label === "Copy prompt link" ? "Link" : null;
   const { copyToClipboard, isCopied } = useCopyToClipboard<void>({
     onError: (error: Error) => showAnchoredCopyErrorToast(ref, error),
     timeout: ANCHORED_COPY_TOAST_TIMEOUT_MS,
@@ -42,13 +45,14 @@ export const MessageCopyButton = memo(function MessageCopyButton({
             onClick={() => copyToClipboard(text)}
             ref={ref}
             type="button"
-            size={size}
+            size={azonLayout && azonText !== null ? "xs" : size}
             variant={variant === "ghost" ? "ghost-muted" : variant}
             className={className}
           />
         }
       >
         {isCopied ? <CheckIcon className="size-3 text-primary" /> : <Icon className="size-3" />}
+        {azonLayout && azonText !== null ? <span>{azonText}</span> : null}
       </TooltipTrigger>
       <TooltipPopup>
         <p>{label}</p>

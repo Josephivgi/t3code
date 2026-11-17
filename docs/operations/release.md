@@ -1,6 +1,6 @@
 # Release Checklist
 
-> For maintainers. Using T3 Code? See [docs/user](../user/).
+> For maintainers. Using Azon Beta? See [docs/user](../user/).
 
 This document covers the unified release workflow for stable and nightly desktop releases.
 
@@ -45,7 +45,7 @@ the version.
   - The release job's **Write release notes** step (`scripts/generate-release-notes.ts`) builds the body: a computed header line, a short summary from `gpt-6.1-terra`, and GitHub's generated list folded under `<details>`. It needs the `OPENAI_API_KEY` secret. The desktop update popover shows up to seven highlights and the number of other fixes and performance improvements. Mobile-only commits count toward release totals but cannot be highlights. The offered release's age comes from the update feed's `releaseDate`. The nightly Discord post shows the part above `<details>`. If summary generation fails, the release uses GitHub's generated notes.
 - Includes Electron auto-update metadata (for example `latest*.yml`, `nightly*.yml`, and `*.blockmap`) in release assets.
 - Builds a self-contained CLI archive per platform (`t3-<version>-<platform>-<arch>.tar.gz`, `.zip` on Windows) in the same job as that target's desktop artifact and attaches them to the GitHub Release with a `SHA256SUMS` file, on every channel, for five targets: macOS arm64, Linux x64 and arm64, Windows x64 and arm64. Every archive is smoke-tested on hardware of its own architecture, and every one but the Windows archives is also built and signed there. There is no macOS x64 archive: Node single-executables are unsupported on x64 macOS (the SEA docs list macOS as arm64 only) and the binary segfaults on start; the x64 desktop app is Electron and unaffected.
-  - The archive holds the server as a Node single-executable (`scripts/build-cli-archive.ts`), so unpacking it needs neither Node, npm, nor a compiler. It is the only form in which T3 Code manages a runtime: the desktop's SSH environments, the boot service, `t3 update`, and the install scripts all download and verify this archive against `SHA256SUMS`. The `t3` npm package exists for people who run `npx t3` or `npm install -g t3` themselves, and it downloads this same archive too; nothing in the product installs from npm. The `curl | sh` installers are `scripts/install.sh` and `scripts/install.ps1`; the marketing site copies them into its `public/` at build time (`apps/marketing/scripts/stage-install-scripts.mjs`) and serves them at `t3.codes/install.sh` and `/install.ps1`.
+  - The archive holds the server as a Node single-executable (`scripts/build-cli-archive.ts`), so unpacking it needs neither Node, npm, nor a compiler. It is the only form in which Azon Beta manages a runtime: the desktop's SSH environments, the boot service, `t3 update`, and the install scripts all download and verify this archive against `SHA256SUMS`. The `t3` npm package exists for people who run `npx t3` or `npm install -g t3` themselves, and it downloads this same archive too; nothing in the product installs from npm. The `curl | sh` installers are `scripts/install.sh` and `scripts/install.ps1`; the marketing site copies them into its `public/` at build time (`apps/marketing/scripts/stage-install-scripts.mjs`) and serves them at `t3.codes/install.sh` and `/install.ps1`.
   - The root `package.json` pins `engines.node` to the exact Node version used by development, CI and standalone executables. Keep it exact: cross-target builds download that version, and native executable builds reject a different host Node version. TEMPORARY: Linux arm64 executables build only on a Linux arm64 host and are injected with postject, because Node's `--build-sea` output cannot load on 16 or 64 KiB page kernels. Revert when [nodejs/node#67048](https://github.com/nodejs/node/issues/67048) is fixed. Runtime changes need a new T3 release version because installed runtimes are cached by that version.
   - macOS archives are signed with the Developer ID certificate and notarized when the Apple secrets are present (ad hoc otherwise, which still runs from `curl`/`tar` installs). Windows executables use the same Azure Trusted Signing setup as the installer. Every native addon in the macOS archive is signed too, since the hardened runtime refuses unsigned libraries.
   - Each archive is extracted and executed (`scripts/smoke-cli-archive.ts`) on its build runner, or on the `verify_runner` for Windows.
@@ -219,7 +219,7 @@ A deleted legacy tunnel keeps its allocation, so its hostname is kept. When the 
 - On a build with recovery, the connector is rejected and the host requests a replacement tunnel at
   the same hostname.
 - On an older build with a CLI link, startup provisions a new tunnel.
-- On an older build linked from web or mobile, the host stays offline until T3 Code on that computer
+- On an older build linked from web or mobile, the host stays offline until Azon Beta on that computer
   is updated.
 
 Ship the web and mobile builds that show the offline reason before enabling legacy cleanup, so a
@@ -236,7 +236,7 @@ column in its first deploy with this change; the legacy switch stays `off` until
    They include ones the reaper skips, so they are an upper bound on the backlog. The share of `wouldDeleteLegacy` in each sweep's `scanned` estimates how
    much of that total is eligible.
 3. Run the legacy steps of the disposable-host canary below.
-4. Before enabling, confirm the web and mobile builds that show the "update T3 Code on that computer"
+4. Before enabling, confirm the web and mobile builds that show the "update Azon Beta on that computer"
    message are live. Without them, a user whose older host lost its tunnel only sees it as offline.
 5. Set the legacy mode to `enabled`. One sweep deletes at most 100 tunnels, four at a time, and
    stops starting new deletions after 90 seconds. A backlog of 20,000 takes about 17 hours if each
@@ -414,7 +414,7 @@ One-time Vercel dashboard setup:
   - scheduled check every 30 minutes
   - manual `workflow_dispatch` with `channel=nightly`
 - Automatic nightlies require new commits and at least six hours since the last nightly was published, including manual nightlies.
-- To pause automatic nightlies, run `gh variable set PAUSE_NIGHTLY -b true -R pingdotgg/t3code`. Scheduled runs then skip. Stable, preview, and manual nightly runs are unaffected. Resume with `gh variable delete PAUSE_NIGHTLY -R pingdotgg/t3code`.
+- To pause automatic nightlies, run `gh variable set PAUSE_NIGHTLY -b true -R Josephivgi/azon`. Scheduled runs then skip. Stable, preview, and manual nightly runs are unaffected. Resume with `gh variable delete PAUSE_NIGHTLY -R Josephivgi/azon`.
 - Manual nightlies bypass the time and change checks. Nightly runs remain serialized. Scheduled runs wait for an active nightly to finish, then check the publication gap before building.
 - Runs the same desktop quality gates and artifact matrix as the tagged release flow.
 - Publishes a GitHub prerelease only:
@@ -631,7 +631,7 @@ Checklist:
 
 1. Apple Developer account access:
    - Team has rights to create Developer ID certificates.
-2. Create an explicit App ID for `com.t3tools.t3code` and enable Associated Domains.
+2. Create an explicit App ID for `com.azon.beta` and enable Associated Domains.
 3. Create a `Developer ID Application` certificate and a compatible provisioning profile for that
    App ID with Associated Domains enabled.
 4. Export the certificate + private key as `.p12` from Keychain.
@@ -657,7 +657,7 @@ Notes:
 - In-app browser passkeys depend on the same profile. The packager adds each entitlement only when
   the profile grants it, because macOS will not launch an app that claims more than its profile
   allows. The build log reports which ones it enabled.
-  - `keychain-access-groups` (`<TEAM_ID>.com.t3tools.t3code.webauthn`) enables Touch ID passkeys.
+  - `keychain-access-groups` (`<TEAM_ID>.com.azon.beta.webauthn`) enables Touch ID passkeys.
     Profiles that grant the team's keychain groups (`<TEAM_ID>.*`) cover it.
   - `com.apple.developer.web-browser.public-key-credential` lets the system passkey sheet (iCloud
     Keychain, password managers, phones, security keys) serve any site. Apple grants it as a
@@ -711,7 +711,7 @@ Checklist:
 
 - macOS build unsigned when expected signed:
   - Check all Apple secrets plus `APPLE_TEAM_ID` are populated and non-empty.
-  - Confirm the provisioning profile belongs to `APPLE_TEAM_ID.com.t3tools.t3code` and includes
+  - Confirm the provisioning profile belongs to `APPLE_TEAM_ID.com.azon.beta` and includes
     Associated Domains.
 - Windows build unsigned when expected signed:
   - Check all Azure ATS and auth secrets are populated and non-empty.

@@ -361,6 +361,21 @@ export function summarizeT3ToolCalls(
     case "theme-set":
       label = phrase("Set", "set", `the theme ${times}`);
       break;
+    case "plugin-list":
+      label = phrase("Listed", "list", `plugins ${times}`);
+      break;
+    case "plugin-read":
+      label = phrase("Read", "read", `a plugin ${times}`);
+      break;
+    case "plugin-write":
+      label = phrase("Wrote", "write", `a plugin ${times}`);
+      break;
+    case "plugin-set-enabled":
+      label = phrase("Turned", "turn", `a plugin on or off ${times}`);
+      break;
+    case "plugin-delete":
+      label = phrase("Deleted", "delete", `a plugin ${times}`);
+      break;
     case "environment-links":
       label = phrase("Listed", "list", `linked environments ${times}`);
       break;

@@ -331,23 +331,26 @@ export const writesEnvironment = <P, A, E, R>(
      * everything already here as it was.
      */
     readonly linkedCallers?: "allowed";
+    /** Plugin edits run from any local agent thread. Linked callers are still refused. */
+    readonly fullAccess?: "not-required";
   },
 ) => {
+  const requireFullAccess = (caller: Caller) =>
+    options?.fullAccess === "not-required"
+      ? Effect.void
+      : assertFullAccess(caller, fullAccessRequired);
   const check = orchestratingCaller.pipe(
     Effect.tap((caller) =>
       options?.linkedCallers === "allowed"
         ? Effect.void
         : assertNotLinked(caller, "change projects or environment settings"),
     ),
-    Effect.tap((caller) => assertFullAccess(caller, fullAccessRequired)),
+    Effect.tap(requireFullAccess),
   );
   return declare(
     (params: P) => check.pipe(Effect.flatMap(() => handle(params, check))),
     // Linked work never reaches a link at all; that is checked as the call goes.
-    () =>
-      orchestratingCaller.pipe(
-        Effect.tap((caller) => assertFullAccess(caller, fullAccessRequired)),
-      ),
+    () => orchestratingCaller.pipe(Effect.tap(requireFullAccess)),
   );
 };
 

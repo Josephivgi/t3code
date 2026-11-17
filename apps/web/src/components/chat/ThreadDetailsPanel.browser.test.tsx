@@ -96,9 +96,9 @@ const container = { width: 1200, height: 800 };
 const placement = { x: 908, y: 0, right: 12, width: 280, height: 400 } as const;
 const linkedPullRequest: ThreadPullRequestLink = {
   host: "github.com",
-  repository: "pingdotgg/t3code",
+  repository: "Josephivgi/azon",
   number: 27513,
-  url: "https://github.com/pingdotgg/t3code/pull/27513",
+  url: "https://github.com/Josephivgi/azon/pull/27513",
   source: "manual",
   linkedAt: "2026-10-30T00:00:00.000Z",
   snapshot: null,

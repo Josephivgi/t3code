@@ -6,6 +6,7 @@ import type {
   SnapShotSource,
 } from "@t3tools/contracts";
 import { formatAttachmentSize } from "@t3tools/client-runtime/state/attachments";
+import { useUiStyle } from "../../hooks/useSettings";
 import { CircleAlertIcon, ImageIcon, PaperclipIcon, PlayIcon, XIcon } from "lucide-react";
 import { type ComponentProps, useLayoutEffect, useRef } from "react";
 
@@ -707,6 +708,7 @@ export function ComposerAttachButton({
   readonly focusComposer: () => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const azonLayout = useUiStyle() === "azon";
   return (
     <>
       <input
@@ -731,7 +733,7 @@ export function ComposerAttachButton({
             <Button
               type="button"
               variant="ghost"
-              size="icon-sm"
+              size={azonLayout ? "sm" : "icon-sm"}
               onPointerDown={(event) => event.preventDefault()}
               onClick={() => inputRef.current?.click()}
               aria-label="Attach files"
@@ -740,6 +742,7 @@ export function ComposerAttachButton({
         >
           {/* The clip's weight sits in its upper loop; 1px down reads as centered on the row. */}
           <PaperclipIcon className="translate-y-px" />
+          {azonLayout ? <span className="text-xs">Attach</span> : null}
         </TooltipTrigger>
         <TooltipPopup>Attach files</TooltipPopup>
       </Tooltip>

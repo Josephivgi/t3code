@@ -2,7 +2,7 @@
 
 ## First checkout
 
-T3 Code uses [Vite+](https://viteplus.dev/guide/). Install its global `vp` command:
+Azon Beta uses [Vite+](https://viteplus.dev/guide/). Install its global `vp` command:
 
 ```sh
 curl -fsSL https://vite.plus | bash
@@ -29,12 +29,12 @@ Prefer a container? See [Dev container](../internals/devcontainer.md) for VS Cod
 
 ## Forge mirror (optional)
 
-GitHub is the source of truth. [source.tanstack.com/@pingdotgg/t3code](https://source.tanstack.com/@pingdotgg/t3code)
+GitHub is the source of truth. [source.tanstack.com/@Josephivgi/azon](https://source.tanstack.com/@Josephivgi/azon)
 is a two-way synced mirror built for many agents working at once. You never need it to contribute.
 
 ```sh
-git remote set-url origin https://source.tanstack.com/@pingdotgg/t3code.git
-git remote add github https://github.com/pingdotgg/t3code.git
+git remote set-url origin https://source.tanstack.com/@Josephivgi/azon.git
+git remote add github https://github.com/Josephivgi/azon.git
 src auth login --web && src auth setup-git
 ```
 
@@ -157,7 +157,7 @@ reloads by itself. The license manifest is not generated in this mode. `--built`
 
 Use this only on a hostname where you trust every service. Browsers send cookies to all ports
 on that hostname. Any service you visit there can receive the reusable admin credential,
-including services unrelated to T3 Code. If you run untrusted services on that hostname, keep
+including services unrelated to Azon Beta. If you run untrusted services on that hostname, keep
 normal per-environment pairing instead.
 
 To use one browser profile across web dev worktrees on the same hostname, generate one fixed

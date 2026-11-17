@@ -5,6 +5,7 @@ import {
   WorkspaceBreadcrumbItem,
   WorkspaceBreadcrumbSeparator,
 } from "../WorkspaceBreadcrumb";
+import { getSmallTools } from "../../plugins/smallTools";
 import { SETTINGS_SECTION_LABELS } from "./settingsSearch";
 
 const SETTINGS_LABEL = msg("Settings");
@@ -16,6 +17,10 @@ const SETTINGS_BREADCRUMB_LABELS: Readonly<Record<string, string>> = {
 };
 
 function settingsBreadcrumbLabel(pathname: string): string | null {
+  if (pathname.startsWith("/settings/small-tools/")) {
+    const key = decodeURIComponent(pathname.slice("/settings/small-tools/".length));
+    return getSmallTools().find((tool) => tool.key === key)?.title ?? "Small tools";
+  }
   const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
   return SETTINGS_BREADCRUMB_LABELS[normalizedPathname] ?? null;
 }

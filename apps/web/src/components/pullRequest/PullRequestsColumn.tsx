@@ -1,4 +1,5 @@
 import type { PullRequestInvolvement, PullRequestListState } from "@t3tools/contracts";
+import { useUiStyle } from "../../hooks/useSettings";
 import { Plug2Icon, SearchIcon } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 
@@ -273,15 +274,17 @@ function PullRequestRefreshControl({
   refreshing: boolean;
   onRefresh: () => void;
 }) {
+  const azonLayout = useUiStyle() === "azon";
   return (
     <Button
-      size={compact ? "icon-sm" : "icon"}
+      size={azonLayout ? "sm" : compact ? "icon-sm" : "icon"}
       variant={compact ? "ghost" : "outline"}
       aria-label="Refresh pull requests"
       onClick={onRefresh}
       disabled={refreshing}
     >
       <RefreshIcon size="md" refreshing={refreshing} />
+      {azonLayout ? <span>Refresh</span> : null}
     </Button>
   );
 }

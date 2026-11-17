@@ -7,6 +7,7 @@ import { act, fakeTimers, render } from "../../../test/render";
 vi.mock("~/hooks/useSettings", () => ({
   useEnvironmentIdentificationMode: () => "none",
   useClientSettings: () => false,
+  useUiStyle: () => "t3-code",
 }));
 vi.mock("../SidebarStageBackdrop", () => ({
   StageBackdropButtonArt: () => null,

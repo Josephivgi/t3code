@@ -16,6 +16,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useUiStyle } from "../../hooks/useSettings";
 import { Badge } from "../ui/badge";
 import { Popover, PopoverPopup, PopoverTrigger } from "../ui/popover";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
@@ -151,6 +152,7 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
   const popupRef = useRef<HTMLDivElement | null>(null);
   const size = props.size ?? "sm";
   const docked = props.effortColumn !== undefined;
+  const azonLayout = useUiStyle() === "azon";
 
   const activeEntry =
     props.instanceEntries.find((entry) => entry.instanceId === props.activeInstanceId) ?? null;
@@ -450,7 +452,16 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
         // Docked, the popup opens above the composer and slides over it when that space is short,
         // so a short window gets its full height (Floating UI sizes to the viewport) instead of a sliver.
         {...(docked
-          ? { side: "top" as const, collisionAvoidance: { side: "shift", align: "shift" } as const }
+          ? azonLayout
+            ? // The taller Azon popup flips below the composer when there is no room above it.
+              {
+                side: "top" as const,
+                collisionAvoidance: { side: "flip", align: "shift" } as const,
+              }
+            : {
+                side: "top" as const,
+                collisionAvoidance: { side: "shift", align: "shift" } as const,
+              }
           : {})}
         className="before:hidden"
         padding="none"
@@ -461,11 +472,28 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
             <div className="flex max-h-(--available-height) flex-col">
               {/* One fixed height, so a model with more options never resizes the popup. Short
                   windows shrink it and keep the footer. */}
-              <div className="flex h-86.5 min-h-0 max-sm:h-auto max-sm:flex-col">
-                {picker}
+              <div
+                className={cn(
+                  "flex min-h-0 max-sm:h-auto max-sm:flex-col",
+                  azonLayout ? "max-h-[calc(var(--available-height)-3.5rem)] flex-col" : "h-86.5",
+                )}
+              >
+                {azonLayout ? (
+                  <div className="flex h-56 min-h-0 shrink flex-col overflow-hidden [&>*]:min-h-0 [&>*]:flex-1">
+                    {picker}
+                  </div>
+                ) : (
+                  picker
+                )}
                 <div
                   data-model-picker-effort
-                  className="flex min-h-0 w-48 flex-col sm:shrink-0 border-l border-border/70 bg-muted/40 max-sm:h-64 max-sm:w-full max-sm:border-t max-sm:border-l-0"
+                  className={cn(
+                    "flex min-h-0 flex-col bg-muted/40 max-sm:h-64 max-sm:w-full max-sm:border-t max-sm:border-l-0",
+                    azonLayout
+                      ? "max-h-56 w-full shrink-0 overflow-y-auto border-t border-border/70"
+                      : "w-48 border-l border-border/70 sm:shrink-0",
+                  )}
+                  data-effort-placement={azonLayout ? "below" : "side"}
                   onKeyDown={(event) => {
                     if (event.key !== "ArrowLeft" || event.altKey || event.ctrlKey || event.metaKey)
                       return;

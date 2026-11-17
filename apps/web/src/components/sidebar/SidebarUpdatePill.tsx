@@ -41,6 +41,7 @@ import {
 } from "./DesktopUpdateStatusIcon";
 import { SidebarUpdateReleaseNotes } from "./SidebarUpdateReleaseNotes";
 import { SidebarUpdateCapsule } from "./SidebarUpdateCapsule";
+import { useUiStyle } from "../../hooks/useSettings";
 import { UpdateEverythingDialog } from "./UpdateEverythingDialog";
 import type { UpdateEverythingRun, UpdateRunLocalState } from "./updateEverything.logic";
 import {
@@ -197,6 +198,7 @@ export function SidebarUpdatePill() {
 }
 
 function SidebarUpdateControl() {
+  const azonLayout = useUiStyle() === "azon";
   const state = useDesktopUpdateState();
   // The desktop updates this machine, whose policy the primary environment reports.
   const updatesDenial = managedUpdatesDenial(usePrimaryManagedPolicy());
@@ -466,7 +468,8 @@ function SidebarUpdateControl() {
       aria-label={idleTooltip?.detail ? `${tooltip}: ${idleTooltip.detail}` : tooltip}
       aria-disabled={isInteractionDisabled || undefined}
       className={cn(
-        "inline-flex size-8 items-center justify-center rounded-full outline-hidden ring-ring transition-colors focus-visible:ring-2 focus-visible:ring-inset",
+        azonLayout ? "h-8 gap-1.5 px-2.5 text-xs" : "size-8",
+        "inline-flex items-center justify-center rounded-full outline-hidden ring-ring transition-colors focus-visible:ring-2 focus-visible:ring-inset",
         isInteractionDisabled ? "cursor-not-allowed" : "cursor-pointer",
         showUpdateIconState
           ? cn(
@@ -504,6 +507,7 @@ function SidebarUpdateControl() {
       }}
     >
       {statusIcon}
+      {azonLayout ? <span>Updates</span> : null}
     </button>
   );
 

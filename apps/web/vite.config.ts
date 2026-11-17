@@ -283,7 +283,7 @@ function bootstrapTitlePlugin(): Plugin {
         hostedAppChannel: configuredHostedAppChannel,
         development,
       });
-      const title = formatAppDisplayName({ baseName: "T3 Code", stageLabel });
+      const title = formatAppDisplayName({ baseName: "Azon Beta", stageLabel });
       return html.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`);
     },
   };
@@ -372,6 +372,10 @@ export default defineConfig(({ command }) => {
       "import.meta.env.T3CODE_FEATURE_SECRETS": JSON.stringify(configuredFeatureSecrets),
       "import.meta.env.VITE_RELEASE_CHANNEL": JSON.stringify(configuredReleaseChannel),
       "import.meta.env.APP_VERSION": JSON.stringify(configuredAppVersion),
+      // Local rebuilds keep the version, so plugins tell builds apart by this stamp.
+      "import.meta.env.T3CODE_BUILD_STAMP": JSON.stringify(
+        `${configuredAppVersion}@${new Date().toISOString()}`,
+      ),
     },
     resolve: {
       tsconfigPaths: true,

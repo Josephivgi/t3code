@@ -57,6 +57,11 @@ export type T3McpToolSummaryAction =
   | "environment-update"
   | "theme-read"
   | "theme-set"
+  | "plugin-list"
+  | "plugin-read"
+  | "plugin-write"
+  | "plugin-set-enabled"
+  | "plugin-delete"
   | "attachment-prepare"
   | "attachment-discard"
   | "attachment-send"
@@ -359,6 +364,14 @@ const T3_MCP_TOOLS: Readonly<Record<string, T3McpToolDefinition>> = {
   ),
   t3_theme_read: tool(["Read", "Reading", "Read", "themes"], "theme-read"),
   t3_theme_set: tool(["Set", "Setting", "Set", "the theme"], "theme-set"),
+  t3_plugin_list: tool(["List", "Listing", "Listed", "plugins"], "plugin-list"),
+  t3_plugin_read: tool(["Read", "Reading", "Read", "a plugin"], "plugin-read"),
+  t3_plugin_write: tool(["Write", "Writing", "Wrote", "a plugin"], "plugin-write"),
+  t3_plugin_set_enabled: tool(
+    ["Turn", "Turning", "Turned", "a plugin on or off"],
+    "plugin-set-enabled",
+  ),
+  t3_plugin_delete: tool(["Delete", "Deleting", "Deleted", "a plugin"], "plugin-delete"),
   t3_thread_launch: tool(["Launch", "Launching", "Launched", "a project thread"], "thread-create"),
   t3_project_list: tool(["List", "Listing", "Listed", "projects"], "project-list"),
   t3_project_read: tool(["Read", "Reading", "Read", "a project"], "project-read"),

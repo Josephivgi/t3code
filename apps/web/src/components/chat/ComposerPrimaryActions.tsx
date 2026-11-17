@@ -15,6 +15,7 @@ import {
   ListPlusIcon,
 } from "lucide-react";
 import { useEnvironmentIdentificationMode } from "~/hooks/useSettings";
+import { useUiStyle } from "../../hooks/useSettings";
 import { formatContextWindowTokens } from "~/lib/contextWindow";
 import { cn, isMacPlatform } from "~/lib/utils";
 import { useShortcutModifierState } from "../../shortcutModifierState";
@@ -248,6 +249,7 @@ export const ComposerPrimaryActions = memo(function ComposerPrimaryActions({
   keepFullHistory = false,
   onToggleKeepFullHistory,
 }: ComposerPrimaryActionsProps) {
+  const azonLayout = useUiStyle() === "azon";
   const [stopPhase, setStopPhase] = useStopPhase({ runId, canInterrupt, canOperateThread });
   const pointerFocusProps = preserveComposerFocusOnPointerDown
     ? { onPointerDown: preventPointerFocus }
@@ -380,6 +382,15 @@ export const ComposerPrimaryActions = memo(function ComposerPrimaryActions({
           : isRunning
             ? "Steer message"
             : "Submit message";
+  const azonSubmitText = showResume
+    ? "Resume"
+    : isEditingQueuedMessage
+      ? "Update"
+      : isRunning && isQueuing
+        ? "Queue"
+        : isRunning
+          ? "Steer"
+          : "Send";
   const submitStatus = isEnvironmentUnavailable
     ? "Environment disconnected"
     : (sendDisabledReason ??
@@ -402,7 +413,8 @@ export const ComposerPrimaryActions = memo(function ComposerPrimaryActions({
     <button
       type={showResume ? "button" : "submit"}
       className={cn(
-        "relative isolate flex h-9 w-9 items-center justify-center overflow-hidden rounded-full shadow-xs transition-all duration-150 enabled:cursor-pointer enabled:inset-shadow-control-highlight hover:scale-105 active:inset-shadow-control-pressed active:shadow-none disabled:pointer-events-none disabled:shadow-none disabled:hover:scale-100 sm:h-8 sm:w-8 [&_svg]:pointer-events-none",
+        azonLayout ? "h-9 gap-1.5 px-3.5 sm:h-8" : "h-9 w-9 sm:h-8 sm:w-8",
+        "relative isolate flex items-center justify-center overflow-hidden rounded-full shadow-xs transition-all duration-150 enabled:cursor-pointer enabled:inset-shadow-control-highlight hover:scale-105 active:inset-shadow-control-pressed active:shadow-none disabled:pointer-events-none disabled:shadow-none disabled:hover:scale-100 [&_svg]:pointer-events-none",
         stageBackdropVariant
           ? "bg-transparent text-white enabled:shadow-black/24 enabled:hover:brightness-110 disabled:opacity-64"
           : "bg-message-action text-message-action-foreground enabled:shadow-message-action/24 hover:bg-message-action-hover disabled:bg-foreground/12 disabled:text-muted-foreground",
@@ -450,6 +462,7 @@ export const ComposerPrimaryActions = memo(function ComposerPrimaryActions({
           />
         </svg>
       )}
+      {azonLayout ? <span className="text-xs font-medium">{azonSubmitText}</span> : null}
     </button>
   );
 

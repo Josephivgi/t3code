@@ -94,6 +94,7 @@ import { HtmlToolkit } from "../../mcp/toolkits/html/tools.ts";
 import { MessageToolkit } from "../../mcp/toolkits/message/tools.ts";
 import { EnvironmentToolkit } from "../../mcp/toolkits/environment/tools.ts";
 import { ThemeToolkit } from "../../mcp/toolkits/theme/tools.ts";
+import { PluginsToolkit } from "../../mcp/toolkits/plugins/tools.ts";
 import { ProjectToolkit } from "../../mcp/toolkits/project/tools.ts";
 import { WorktreeToolkit } from "../../mcp/toolkits/worktree/tools.ts";
 import { ThreadToolkit } from "../../mcp/toolkits/thread/tools.ts";
@@ -740,6 +741,7 @@ describe("ClaudeAdapterV2 MCP query overrides", () => {
       ...Object.values(ProjectToolkit.tools),
       ...Object.values(EnvironmentToolkit.tools),
       ...Object.values(ThemeToolkit.tools),
+      ...Object.values(PluginsToolkit.tools),
       ...Object.values(PreviewControlsToolkit.tools),
       ...Object.values(HtmlToolkit.tools),
       ...Object.values(MessageToolkit.tools),
@@ -811,7 +813,7 @@ describe("ClaudeAdapterV2 native protocol logging", () => {
     assert.equal(systemPrompt.preset, "claude_code");
     assert.include(systemPrompt.append ?? "", "Use `delegate_task`");
     assert.include(systemPrompt.append ?? "", "call `t3_background_wait`");
-    assert.notInclude(systemPrompt.append ?? "", "## T3 Code devices");
+    assert.notInclude(systemPrompt.append ?? "", "## Azon Beta devices");
     const logged = ClaudeAdapterV2.loggedClaudeQueryOptions(options);
     assert.equal(logged.hasMcpServers, true);
     assert.notInclude(JSON.stringify(logged), "secret-claude-token");
@@ -857,8 +859,8 @@ describe("ClaudeAdapterV2 device instructions", () => {
   });
 
   it("leaves the device block out without device access or without T3 tools", () => {
-    assert.notInclude(append({ mcp: true, deviceToolsAvailable: false }), "## T3 Code devices");
-    assert.notInclude(append({ mcp: false, deviceToolsAvailable: true }), "## T3 Code devices");
+    assert.notInclude(append({ mcp: true, deviceToolsAvailable: false }), "## Azon Beta devices");
+    assert.notInclude(append({ mcp: false, deviceToolsAvailable: true }), "## Azon Beta devices");
   });
 
   it("gives native subagents the device block only in a session with device access", async () => {

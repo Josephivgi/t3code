@@ -14,7 +14,7 @@ import {
 } from "../components/settings/SettingsScopeContext";
 import { useEnvironments } from "../state/environments";
 import { SettingsScopeNotice } from "../components/settings/SettingsScopeNotice";
-import { SETTINGS_DEVICE_ONLY_PATHS } from "../components/settings/SettingsScopeSentence";
+import { isDeviceOnlySettingsPath } from "../components/settings/SettingsScopeSentence";
 import { SettingsPageContainer } from "../components/settings/settingsLayout";
 import {
   retainSettingsScope,
@@ -85,7 +85,7 @@ function SettingsScopeBoundary({ pathname, children }: { pathname: string; child
       </SettingsScopeNotice>
     );
   }
-  if (SETTINGS_DEVICE_ONLY_PATHS.has(pathname) || pathname === "/settings/projects") {
+  if (isDeviceOnlySettingsPath(pathname) || pathname === "/settings/projects") {
     return children;
   }
   if (scope.kind === "unavailable")
@@ -151,7 +151,7 @@ function SettingsRouteLayout() {
     <SettingsScopeProvider
       search={rawSearch}
       singleEnvironment={pathname === "/settings/providers" || pathname === "/settings/secrets"}
-      deviceOnly={SETTINGS_DEVICE_ONLY_PATHS.has(pathname)}
+      deviceOnly={isDeviceOnlySettingsPath(pathname)}
       onChange={(next) => {
         // Send every axis so retain middleware recognizes "all" as an explicit target.
         void navigate({
@@ -175,6 +175,9 @@ export const Route = createFileRoute("/_chat/settings")({
   validateSearch: validateSettingsRouteSearch,
   search: { middlewares: [retainSettingsScope] },
   beforeLoad: async ({ location }) => {
+    if (location.pathname === "/settings/small-tools") {
+      throw redirect({ to: "/settings/general", replace: true });
+    }
     if (location.pathname === "/settings") {
       throw redirect({ to: "/settings/general", replace: true });
     }

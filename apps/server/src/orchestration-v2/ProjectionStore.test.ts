@@ -7359,7 +7359,7 @@ it.layer(layerTest)("ProjectionStoreV2", (it) => {
   );
 
   it.effect.each([
-    ["T3 Code's idle compaction", "agent", "server", undefined, true, "/compact"],
+    ["Azon Beta's idle compaction", "agent", "server", undefined, true, "/compact"],
     ["compacting on return", "user", "web", "onReturn", true, "/compact"],
     ["a typed /compact", "user", "mobile", undefined, false, "/compact"],
     ["a normalized idle command", "agent", "server", undefined, true, " \t\u00a0/COMPACT\u3000\n"],
@@ -11066,9 +11066,9 @@ it.layer(layerTest)("ProjectionStoreV2", (it) => {
       });
       const link = {
         host: "github.com",
-        repository: "pingdotgg/t3code",
+        repository: "Josephivgi/azon",
         number: 7,
-        url: "https://github.com/pingdotgg/t3code/pull/7",
+        url: "https://github.com/Josephivgi/azon/pull/7",
         source: "agent" as const,
         linkedAt: DateTime.formatIso(at),
         snapshot: null,
@@ -11112,7 +11112,7 @@ it.layer(layerTest)("ProjectionStoreV2", (it) => {
       ]);
       assert.deepEqual((yield* store.getThreadShell(threadId))?.pendingBackgroundTasks, [
         {
-          taskId: "pull-request-watch:github.com/pingdotgg/t3code#7",
+          taskId: "pull-request-watch:github.com/Josephivgi/azon#7",
           description: "Watching pull request #7",
           kind: "monitor",
           awaited: true,

@@ -74,6 +74,8 @@ function makeDesktopContentSecurityPolicy(input: DesktopProtocolRegistrationInpu
     "'self'",
     "'unsafe-inline'",
     "'wasm-unsafe-eval'",
+    // Plugin client.js loads as a blob: module (apps/web/src/plugins/pluginHost.ts).
+    "blob:",
     ...(clerkOrigin ? [clerkOrigin] : []),
     "https://challenges.cloudflare.com",
   ];

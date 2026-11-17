@@ -677,7 +677,7 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
     background-color: color-mix(in oklab, var(--primary) 45%, transparent);
   }
   :root {
-    /* Keep the original T3 Code artwork palettes as the defaults. Built-in
+    /* Keep the original Azon Beta artwork palettes as the defaults. Built-in
        themes override them with their own pigments in the components layer. */
     --stage-art-top: oklch(0.782169 0.123386 240.226);
     --stage-art-mid: oklch(0.616111 0.195824 259.735);
@@ -2639,4 +2639,109 @@ code {
 
 .messages-timeline-scroll:focus-visible {
   outline: none;
+}
+
+/* Azon layout: labeled, roomier sidebar rows. Set by Settings > Appearance > UI. */
+[data-ui-style="azon"] [data-sidebar="footer"] {
+  border-top: 1px solid var(--sidebar-border, var(--border));
+  padding-top: 0.5rem;
+}
+[data-ui-style="azon"] [data-sidebar="group-label"] {
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+[data-ui-style="azon"] [data-sidebar="menu-button"] {
+  border-radius: 0.5rem;
+}
+
+/* Azon layout: sidebar cards, header bar, message bubbles, composer card */
+[data-ui-style="azon"] [data-slot="sidebar-container"] {
+  background: color-mix(in srgb, var(--muted, #f4f4f5) 55%, var(--background, #fff));
+}
+[data-ui-style="azon"] [data-testid="sidebar-row-card"] {
+  border: 1px solid color-mix(in srgb, var(--border, #e4e4e7) 80%, transparent);
+  border-radius: 0.875rem;
+  background: var(--background, #fff);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
+}
+[data-ui-style="azon"] [data-testid="sidebar-row-card"]:hover {
+  border-color: color-mix(in srgb, var(--primary, #4f46e5) 40%, var(--border, #e4e4e7));
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.07);
+}
+[data-ui-style="azon"] [data-testid="sidebar-row-card"][aria-current="page"] {
+  border-color: var(--primary, #4f46e5);
+  box-shadow:
+    inset 3px 0 0 var(--primary, #4f46e5),
+    0 2px 8px rgb(0 0 0 / 0.07);
+}
+[data-ui-style="azon"] [data-slot="sidebar-group"] ul {
+  gap: 0.25rem;
+}
+[data-ui-style="azon"] [data-slot="sidebar-inset"] > header,
+[data-ui-style="azon"] [data-slot="sidebar-inset"] header:first-of-type {
+  border-bottom: 1px solid var(--border, #e4e4e7);
+  background: color-mix(in srgb, var(--background, #fff) 92%, transparent);
+  backdrop-filter: blur(8px);
+}
+[data-ui-style="azon"] [data-slot="composer-shell"] {
+  border-radius: 1.25rem;
+  border: 1px solid var(--border, #e4e4e7);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.08);
+  transition:
+    border-color 120ms,
+    box-shadow 120ms;
+}
+[data-ui-style="azon"] [data-slot="composer-shell"]:focus-within {
+  border-color: var(--primary, #4f46e5);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--primary, #4f46e5) 18%, transparent),
+    0 8px 28px rgb(0 0 0 / 0.1);
+}
+
+[data-ui-style="azon"] [data-message-role="user"] > div > div:first-child {
+  border-radius: 1.25rem 1.25rem 0.375rem 1.25rem;
+  background: color-mix(in srgb, var(--primary, #4f46e5) 9%, var(--background, #fff));
+  border: 1px solid color-mix(in srgb, var(--primary, #4f46e5) 22%, var(--border, #e4e4e7));
+}
+[data-ui-style="azon"] [data-message-role="assistant"] {
+  border-left: 3px solid color-mix(in srgb, var(--primary, #4f46e5) 55%, transparent);
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+}
+[data-ui-style="azon"] [data-slot="sidebar-inset"] h1.text-center {
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  background: linear-gradient(120deg, var(--foreground, #18181b), var(--primary, #4f46e5));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+[data-ui-style="azon"] [role="dialog"] [data-sidebar="menu-button"][aria-current="page"] {
+  background: color-mix(in srgb, var(--primary, #4f46e5) 12%, transparent);
+  color: var(--primary, #4f46e5);
+  border-radius: 0.625rem;
+}
+[data-ui-style="azon"] [role="dialog"] [data-sidebar="menu-button"][aria-current="page"] > svg {
+  color: var(--primary, #4f46e5);
+}
+[data-ui-style="azon"] [data-slot="sidebar-container"] [data-slot="button"] {
+  border-radius: 0.75rem;
+}
+[data-ui-style="azon"] [data-sidebar="footer"] [data-sidebar="menu-button"] {
+  border-radius: 0.75rem;
+}
+[data-ui-style="azon"] [data-sidebar="footer"] [data-sidebar="menu-button"]:hover {
+  background: color-mix(in srgb, var(--primary, #4f46e5) 10%, transparent);
+  color: var(--primary, #4f46e5);
+}
+[data-ui-style="azon"] [data-slot="sidebar-inset"] [data-slot="button"][data-variant="outline"] {
+  border-radius: 0.75rem;
+}
+[data-ui-style="azon"] [data-slot="sidebar-inset"] > * h1 {
+  letter-spacing: -0.02em;
 }

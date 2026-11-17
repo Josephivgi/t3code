@@ -81,11 +81,11 @@ export function resolveProviderCompatibility(
       : "unknown";
   const message =
     status === "broken"
-      ? "This provider version is known to be incompatible with this T3 Code release."
+      ? "This provider version is known to be incompatible with this Azon Beta release."
       : status === "unsupported"
-        ? "This provider version is outside the supported range for this T3 Code release."
+        ? "This provider version is outside the supported range for this Azon Beta release."
         : status === "graceful"
-          ? "This provider version has limited compatibility with this T3 Code release."
+          ? "This provider version has limited compatibility with this Azon Beta release."
           : null;
   const recommendedVersion = policy.recommendedVersion ?? null;
   const recommendedRange = policy.recommendedRange ?? null;

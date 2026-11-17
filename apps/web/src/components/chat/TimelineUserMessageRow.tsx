@@ -1,4 +1,5 @@
 import { InlineAudioPreview } from "../files/InlineAudioPreview";
+import { useUiStyle } from "../../hooks/useSettings";
 import { filePreviewKind } from "@t3tools/shared/filePreview";
 import {
   CHAT_USER_MARKDOWN_REMARK_PLUGINS,
@@ -853,7 +854,7 @@ function UserTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" 
           className="me-1 text-2xs text-muted-foreground/70"
           data-user-message-attribution="t3code"
         >
-          Sent by T3 Code
+          Sent by Azon Beta
         </p>
       ) : null}
       {/* The row's heading already names the guest for screen readers. */}
@@ -1108,6 +1109,7 @@ function RevertUserMessageButton({
   turnCount: number;
   messageId: MessageId;
 }) {
+  const azonLayout = useUiStyle() === "azon";
   const ctx = use(TimelineRowCtx);
   const activity = use(TimelineRowActivityCtx);
 
@@ -1126,6 +1128,7 @@ function RevertUserMessageButton({
         }
       >
         <PencilIcon className="size-3" />
+        {azonLayout ? <span>Edit</span> : null}
       </TooltipTrigger>
       <TooltipPopup side="top">Edit from here</TooltipPopup>
     </Tooltip>

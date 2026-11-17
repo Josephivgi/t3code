@@ -17,6 +17,7 @@ import {
   type ClientSettings,
   DEFAULT_CLIENT_SETTINGS,
   type EnvironmentIdentificationMode,
+  type UiStyle,
   type UnifiedSettings,
 } from "@t3tools/contracts/settings";
 import { safeErrorLogAttributes } from "@t3tools/client-runtime/errors";
@@ -131,6 +132,19 @@ export function subscribeClientSettingsHydration(listener: () => void): () => vo
   };
 }
 
+const AZON_STYLE_MIGRATION_KEY = "azon:ui-style-default-v1";
+
+/** "T3 Code" was the only saved choice before Azon existed, so it moves to Azon once; later picks stay. */
+function moveSavedT3CodeStyleToAzonOnce(savedStyle: UiStyle | undefined): void {
+  try {
+    if (window.localStorage.getItem(AZON_STYLE_MIGRATION_KEY) !== null) return;
+    window.localStorage.setItem(AZON_STYLE_MIGRATION_KEY, "done");
+  } catch {
+    return;
+  }
+  if (savedStyle === "t3-code") void updateClientSettings({ uiStyle: "azon" });
+}
+
 async function hydrateClientSettings(): Promise<void> {
   if (clientSettingsHydrationStatus === "ready") {
     return;
@@ -158,6 +172,7 @@ async function hydrateClientSettings(): Promise<void> {
         refreshClientSettingsFromOtherTab,
       );
       setClientSettingsHydrationStatus("ready");
+      moveSavedT3CodeStyleToAzonOnce(persistedSettings?.uiStyle);
     } catch (error) {
       if (hydrationGeneration === clientSettingsHydrationGeneration) {
         setClientSettingsHydrationStatus("failed");
@@ -396,6 +411,11 @@ export function startModelPreferencesMigration(): () => void {
   return () => {
     for (const unsubscribe of unsubscribes) unsubscribe();
   };
+}
+
+/** The app's look, for components that lay out differently in the Azon layout. */
+export function useUiStyle(): UiStyle {
+  return useClientSettings((settings) => settings.uiStyle);
 }
 
 export function useMergedSettings<T = UnifiedSettings>(

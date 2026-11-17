@@ -59,6 +59,12 @@ export const SETTINGS_DEVICE_ONLY_PATHS: ReadonlySet<string> = new Set([
   "/settings/about",
 ]);
 
+/** Plugin pages and tool pages are not per project or environment. */
+export const isDeviceOnlySettingsPath = (pathname: string): boolean =>
+  SETTINGS_DEVICE_ONLY_PATHS.has(pathname) ||
+  pathname === "/settings/plugins" ||
+  pathname.startsWith("/settings/small-tools/");
+
 interface SettingsScopeMenuProps {
   readonly value: SettingsScopeSearch;
   readonly groups: readonly SidebarProjectSnapshot[];
@@ -71,7 +77,7 @@ export function SettingsScopeSentence() {
   const scope = useOptionalSettingsScope();
   const pathname = useLocation({ select: (location) => location.pathname });
   const { environments } = useEnvironments();
-  if (scope === null || SETTINGS_DEVICE_ONLY_PATHS.has(pathname)) return null;
+  if (scope === null || isDeviceOnlySettingsPath(pathname)) return null;
   const props: SettingsScopeMenuProps = {
     value: scope.search,
     singleEnvironment: scope.singleEnvironment,

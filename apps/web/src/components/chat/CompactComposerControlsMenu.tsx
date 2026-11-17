@@ -4,6 +4,7 @@ import { EllipsisIcon } from "lucide-react";
 import { Menu, MenuPopup, MenuTrigger } from "../ui/menu";
 import { ComposerControl, ComposerControlIcon } from "./ComposerControl";
 import { focusRequestedPermission, useComposerMenuProps } from "./composerEventScope";
+import { useUiStyle } from "../../hooks/useSettings";
 import { useComposerMenuState } from "./useComposerMenuState";
 import { ComposerPermissionsSection, type RuntimeModeOption } from "./ComposerFooterControls";
 
@@ -16,6 +17,7 @@ export const CompactComposerControlsMenu = memo(function CompactComposerControls
   hidden?: boolean;
   onRuntimeModeChange: (mode: RuntimeMode) => void;
 }) {
+  const azonLayout = useUiStyle() === "azon";
   const composerFloatingLayerProps = useComposerMenuProps();
   const size = props.size ?? "sm";
   const [open, setOpen] = useComposerMenuState(props.hidden);
@@ -39,6 +41,7 @@ export const CompactComposerControlsMenu = memo(function CompactComposerControls
         }
       >
         <ComposerControlIcon icon={EllipsisIcon} size={size} />
+        {azonLayout ? <span className="pr-1 text-xs">More</span> : null}
       </MenuTrigger>
       <MenuPopup align="start" {...composerFloatingLayerProps}>
         {props.showPermissions ? (

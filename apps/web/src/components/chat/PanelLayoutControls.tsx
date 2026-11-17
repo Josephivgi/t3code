@@ -12,6 +12,7 @@ import { cn } from "~/lib/utils";
 import type { ThreadPanelPresentation } from "../../rightPanelLayout";
 import { PopoverCreateHandle, PopoverTrigger } from "../ui/popover";
 import { useMobileSidebarSheetMounted } from "../ui/sidebar";
+import { useUiStyle } from "../../hooks/useSettings";
 import { Toggle } from "../ui/toggle";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 
@@ -57,6 +58,7 @@ export const PanelLayoutControls = memo(function PanelLayoutControls({
   onToggleThreadPanel,
   onToggleRightPanel,
 }: PanelLayoutControlsProps) {
+  const azonLayout = useUiStyle() === "azon";
   const threadPanelToggle = (
     <Toggle
       className="relative shrink-0 [-webkit-app-region:no-drag]"
@@ -67,6 +69,7 @@ export const PanelLayoutControls = memo(function PanelLayoutControls({
       size="sm"
     >
       <SquareMenuIcon className="size-4" />
+      {azonLayout ? <span className="text-xs">Details</span> : null}
     </Toggle>
   );
   const threadPanelControl = (
@@ -104,6 +107,7 @@ export const PanelLayoutControls = memo(function PanelLayoutControls({
               disabled={!terminalAvailable}
             >
               <PanelBottomIcon className="size-4" />
+              {azonLayout ? <span className="text-xs">Terminal</span> : null}
             </Toggle>
           </TooltipTrigger>
           <TooltipPopup side="bottom">
@@ -127,6 +131,7 @@ export const PanelLayoutControls = memo(function PanelLayoutControls({
               disabled={!rightPanelAvailable}
             >
               <PanelRightIcon className="size-4" />
+              {azonLayout ? <span className="text-xs">Panel</span> : null}
             </Toggle>
           </TooltipTrigger>
           <TooltipPopup side="bottom">
@@ -148,6 +153,7 @@ export const RightPanelMaximizeControl = memo(function RightPanelMaximizeControl
   onToggle: () => void;
 }) {
   const label = maximized ? "Restore panel size" : "Maximize panel";
+  const azonLayout = useUiStyle() === "azon";
   return (
     <Tooltip>
       <TooltipTrigger
@@ -165,6 +171,9 @@ export const RightPanelMaximizeControl = memo(function RightPanelMaximizeControl
             ) : (
               <Maximize2Icon className="size-4" />
             )}
+            {azonLayout ? (
+              <span className="text-xs">{maximized ? "Restore" : "Maximize"}</span>
+            ) : null}
           </Toggle>
         }
       />

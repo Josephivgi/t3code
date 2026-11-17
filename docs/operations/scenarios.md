@@ -25,7 +25,7 @@ test(
 
     await screen.getByRole("button", "Add project").tap();
     await screen.getByText("Git URL").tap();
-    await screen.getByRole("combobox").fill("https://github.com/pingdotgg/t3code.git");
+    await screen.getByRole("combobox").fill("https://github.com/Josephivgi/azon.git");
     const submit = screen.getByRole("button", "Continue (Enter)");
     await expect(submit).toBeEnabled();
 
@@ -37,7 +37,7 @@ test(
 ```
 
 `screen`, `browser`, `app`, and `expect` are e2e's own. [`t3.ts`](../../scripts/scenarios/t3.ts)
-adds one fixture for what e2e cannot know about T3 Code:
+adds one fixture for what e2e cannot know about Azon Beta:
 
 - `t3.project(title, files)` creates a git repository and adds it as a project.
 - `t3.thread({ project, title, messages })` starts a thread and plays one replayed turn per

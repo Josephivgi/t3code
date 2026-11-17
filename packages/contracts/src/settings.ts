@@ -209,6 +209,11 @@ export const EnvironmentIdentificationMode = Schema.Literals([
 export type EnvironmentIdentificationMode = typeof EnvironmentIdentificationMode.Type;
 export const DEFAULT_ENVIRONMENT_IDENTIFICATION_MODE: EnvironmentIdentificationMode = "artwork";
 
+/** The app's look: the T3 Code layout, or the Azon layout with labeled navigation. */
+export const UiStyle = Schema.Literals(["t3-code", "azon"]);
+export type UiStyle = typeof UiStyle.Type;
+export const DEFAULT_UI_STYLE: UiStyle = "azon";
+
 export const SnapShotKeyChord = KeybindingShortcut.check(
   Schema.makeFilter(
     (shortcut) =>
@@ -477,6 +482,7 @@ export const ClientSettingsSchema = Schema.Struct({
   environmentIdentificationMode: EnvironmentIdentificationMode.pipe(
     Schema.withDecodingDefault(Effect.succeed(DEFAULT_ENVIRONMENT_IDENTIFICATION_MODE)),
   ),
+  uiStyle: UiStyle.pipe(Schema.withDecodingDefault(Effect.succeed(DEFAULT_UI_STYLE))),
   glassOpacity: GlassOpacity.pipe(
     Schema.withDecodingDefault(Effect.succeed(DEFAULT_GLASS_OPACITY)),
   ),
@@ -2061,6 +2067,7 @@ export const ClientSettingsPatch = Schema.Struct({
   diffIgnoreWhitespace: Schema.optionalKey(Schema.Boolean),
   diffLayout: Schema.optionalKey(DiffLayout),
   environmentIdentificationMode: Schema.optionalKey(EnvironmentIdentificationMode),
+  uiStyle: Schema.optionalKey(UiStyle),
   glassOpacity: Schema.optionalKey(GlassOpacity),
   onboardingCompletedAt: Schema.optionalKey(Schema.NullOr(Schema.String)),
   fontSizeInterface: Schema.optionalKey(InterfaceFontSize),

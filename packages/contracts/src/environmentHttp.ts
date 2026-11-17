@@ -80,6 +80,18 @@ import {
 } from "./orchestrationV2.ts";
 import { Project, ProjectMutation, ProjectSnapshot } from "./project.ts";
 import {
+  PluginBootOkPayload,
+  PluginBootStartPayload,
+  PluginCallPayload,
+  PluginCallResult,
+  PluginFilePath,
+  PluginFileResult,
+  PluginId,
+  PluginListResult,
+  PluginStatePayload,
+  PluginSummary,
+} from "./plugins.ts";
+import {
   PullRequestDiffInput,
   PullRequestDiffResult,
   PullRequestOperationError,
@@ -114,6 +126,7 @@ export const EnvironmentRequestInvalidReason = Schema.Literals([
   "invalid_scope",
   "scope_not_granted",
   "invalid_command",
+  "plugin_invalid",
   "invalid_history_cursor",
   "thread_transcript_too_large",
   "invalid_audio",
@@ -148,6 +161,7 @@ export const EnvironmentInternalErrorReason = Schema.Literals([
   "connect_device_revoke_failed",
   "project_snapshot_failed",
   "project_mutation_failed",
+  "plugin_store_failed",
   "orchestration_snapshot_failed",
   "orchestration_thread_snapshot_failed",
   "orchestration_thread_bounded_snapshot_failed",
@@ -268,7 +282,10 @@ export class EnvironmentInternalError extends Schema.TaggedError<EnvironmentInte
   }
 }
 
-export const EnvironmentResourceNotFoundReason = Schema.Literals(["thread_not_found"]);
+export const EnvironmentResourceNotFoundReason = Schema.Literals([
+  "thread_not_found",
+  "plugin_not_found",
+]);
 export type EnvironmentResourceNotFoundReason = typeof EnvironmentResourceNotFoundReason.Type;
 
 export class EnvironmentResourceNotFoundError extends Schema.TaggedError<EnvironmentResourceNotFoundError>()(
@@ -523,7 +540,7 @@ export type T3ConnectTroubleshootingSection = (typeof T3_CONNECT_TROUBLESHOOTING
 
 /** Clients, the CLI, and server logs link here as "More info". */
 export function t3ConnectTroubleshootingUrl(section: T3ConnectTroubleshootingSection): string {
-  return `https://github.com/pingdotgg/t3code/blob/main/docs/user/t3-connect-troubleshooting.md#${section}`;
+  return `https://github.com/Josephivgi/azon/blob/main/docs/user/t3-connect-troubleshooting.md#${section}`;
 }
 
 const REACHABILITY_SECTION = {
@@ -1063,8 +1080,72 @@ class EnvironmentWebhooksHttpApi extends HttpApiGroup.make("webhooks")
   .add(HttpApiEndpoint.patch("webhookPatch", WEBHOOK_PATH, webhookEndpoint))
   .add(HttpApiEndpoint.get("webhookGet", WEBHOOK_PATH, webhookEndpoint)) {}
 
+const EnvironmentPluginErrors = [
+  EnvironmentRequestInvalidError,
+  EnvironmentResourceNotFoundError,
+  EnvironmentInternalError,
+] as const;
+
+class EnvironmentPluginsHttpApi extends HttpApiGroup.make("plugins")
+  .add(
+    HttpApiEndpoint.get("list", "/api/plugins", {
+      headers: OptionalBearerHeaders,
+      success: PluginListResult,
+      error: EnvironmentPluginErrors,
+    }).middleware(EnvironmentAuthenticatedAuth),
+  )
+  .add(
+    HttpApiEndpoint.get("file", "/api/plugins/:id/file", {
+      headers: OptionalBearerHeaders,
+      params: Schema.Struct({ id: PluginId }),
+      query: Schema.Struct({ path: PluginFilePath }),
+      success: PluginFileResult,
+      error: EnvironmentPluginErrors,
+    }).middleware(EnvironmentAuthenticatedAuth),
+  )
+  .add(
+    HttpApiEndpoint.post("state", "/api/plugins/:id/state", {
+      headers: OptionalBearerHeaders,
+      params: Schema.Struct({ id: PluginId }),
+      payload: PluginStatePayload,
+      success: PluginSummary,
+      error: EnvironmentPluginErrors,
+    }).middleware(EnvironmentAuthenticatedAuth),
+  )
+  .add(
+    HttpApiEndpoint.post("bootStart", "/api/plugins/boot/start", {
+      headers: OptionalBearerHeaders,
+      payload: PluginBootStartPayload,
+      success: Schema.Struct({}),
+      error: EnvironmentPluginErrors,
+    }).middleware(EnvironmentAuthenticatedAuth),
+  )
+  .add(
+    HttpApiEndpoint.post("bootOk", "/api/plugins/boot/ok", {
+      headers: OptionalBearerHeaders,
+      payload: PluginBootOkPayload,
+      success: Schema.Struct({}),
+      error: EnvironmentPluginErrors,
+    }).middleware(EnvironmentAuthenticatedAuth),
+    HttpApiEndpoint.post("call", "/api/plugins/:id/call", {
+      headers: OptionalBearerHeaders,
+      params: Schema.Struct({ id: PluginId }),
+      payload: PluginCallPayload,
+      success: PluginCallResult,
+      error: EnvironmentPluginErrors,
+    }).middleware(EnvironmentAuthenticatedAuth),
+    // POST, not DELETE: the packaged server's CORS allows only GET and POST from the desktop page.
+    HttpApiEndpoint.post("remove", "/api/plugins/:id/delete", {
+      headers: OptionalBearerHeaders,
+      params: Schema.Struct({ id: PluginId }),
+      success: Schema.Struct({ deleted: Schema.Literal(true) }),
+      error: EnvironmentPluginErrors,
+    }).middleware(EnvironmentAuthenticatedAuth),
+  ) {}
+
 export class EnvironmentHttpApi extends HttpApi.make("environment")
   .add(EnvironmentMetadataHttpApi)
+  .add(EnvironmentPluginsHttpApi)
   .add(EnvironmentAuthHttpApi)
   .add(EnvironmentMcpOAuthHttpApi)
   .add(EnvironmentOrchestrationHttpApi)

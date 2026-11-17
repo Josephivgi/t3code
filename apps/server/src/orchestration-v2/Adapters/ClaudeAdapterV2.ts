@@ -2397,6 +2397,8 @@ export const CLAUDE_READ_ONLY_T3_MCP_ALLOWED_TOOLS: ReadonlyArray<string> = [
   "mcp__t3-code__t3_environment_read",
   "mcp__t3-code__t3_environment_links",
   "mcp__t3-code__t3_theme_read",
+  "mcp__t3-code__t3_plugin_list",
+  "mcp__t3-code__t3_plugin_read",
   "mcp__t3-code__html_preview",
   "mcp__t3-code__html_render",
   "mcp__t3-code__send_to_user",
@@ -4237,7 +4239,7 @@ export function permissionResultFromDecision(input: {
   readonly toolUseID: string;
   readonly suggestions?: Parameters<CanUseTool>[2]["suggestions"];
   readonly feedback?: string;
-  /** Under an administrator's ceiling, T3 Code's mode is the only one; Claude cannot switch it. */
+  /** Under an administrator's ceiling, Azon Beta's mode is the only one; Claude cannot switch it. */
   readonly managedCeiling?: boolean;
 }): PermissionResult {
   if (input.decision === "accept" || input.decision === "acceptForSession") {
@@ -10439,7 +10441,7 @@ export const makeClaudeAdapterV2 = Effect.fn("makeClaudeAdapterV2")(function* (
               failure: makeProviderFailure({
                 class: "provider_error",
                 code: "claude_mod_ui_unsupported",
-                message: `The Claude Code mod "${focusedPlugin}" is waiting for input in its terminal pane, which T3 Code cannot show. Disable the mod for sessions run from T3 Code, or run the task in the Claude Code terminal.`,
+                message: `The Claude Code mod "${focusedPlugin}" is waiting for input in its terminal pane, which Azon Beta cannot show. Disable the mod for sessions run from Azon Beta, or run the task in the Claude Code terminal.`,
               }),
             });
             // Closing ends the CLI process and abandons the held tool call

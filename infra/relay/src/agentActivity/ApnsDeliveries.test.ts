@@ -34,7 +34,7 @@ const config = RelayConfiguration.RelayConfiguration.of({
     teamId: "team-id",
     keyId: "key-id",
     privateKey: Redacted.make("not-a-private-key"),
-    bundleId: "com.t3tools.t3code.dev",
+    bundleId: "com.azon.beta.dev",
   },
   apnsDeliveryJobSigningSecret: Redacted.make("job-signing-secret"),
   clerkSecretKey: Redacted.make("clerk-secret"),
@@ -73,7 +73,7 @@ const state: RelayAgentActivityState = {
 };
 
 const aggregate: RelayAgentActivityAggregateState = {
-  title: "T3 Code",
+  title: "Azon Beta",
   subtitle: "Agent work in progress",
   activeCount: 1,
   updatedAt: state.updatedAt,
@@ -1260,7 +1260,7 @@ describe("signed APNs registration metadata", () => {
       token: "unchanged-token",
       ...(changed === "legacy"
         ? {}
-        : { bundleId: "com.t3tools.t3code.dev", apsEnvironment: "sandbox" as const }),
+        : { bundleId: "com.azon.beta.dev", apsEnvironment: "sandbox" as const }),
       aggregate: kind === "live_activity_update" ? aggregate : null,
       ...(kind === "push_notification"
         ? {
@@ -1290,7 +1290,7 @@ describe("signed APNs registration metadata", () => {
         `${changed === "environment" ? "https://api.push.apple.com" : "https://api.sandbox.push.apple.com"}/3/device/unchanged-token`,
       );
       expect(requests[0]?.headers["apns-topic"]).toBe(
-        `${changed === "bundle" ? "com.t3tools.t3code.preview" : "com.t3tools.t3code.dev"}${kind === "live_activity_update" ? ".push-type.liveactivity" : ""}`,
+        `${changed === "bundle" ? "com.azon.beta.preview" : "com.azon.beta.dev"}${kind === "live_activity_update" ? ".push-type.liveactivity" : ""}`,
       );
     }).pipe(
       Effect.provide(
@@ -1303,7 +1303,7 @@ describe("signed APNs registration metadata", () => {
               push_token: "unchanged-token",
               activity_push_token: "unchanged-token",
               bundle_id:
-                changed === "bundle" ? "com.t3tools.t3code.preview" : "com.t3tools.t3code.dev",
+                changed === "bundle" ? "com.azon.beta.preview" : "com.azon.beta.dev",
               aps_environment: changed === "environment" ? "production" : "sandbox",
             },
           ],

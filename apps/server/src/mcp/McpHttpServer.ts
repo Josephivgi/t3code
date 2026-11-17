@@ -55,6 +55,8 @@ import { EnvironmentToolkit } from "./toolkits/environment/tools.ts";
 import * as EnvironmentHandlers from "./toolkits/environment/handlers.ts";
 import { ThemeToolkit } from "./toolkits/theme/tools.ts";
 import * as ThemeHandlers from "./toolkits/theme/handlers.ts";
+import { PluginsToolkit } from "./toolkits/plugins/tools.ts";
+import * as PluginsHandlers from "./toolkits/plugins/handlers.ts";
 import { ProjectToolkit } from "./toolkits/project/tools.ts";
 import * as ProjectHandlers from "./toolkits/project/handlers.ts";
 import { AttachmentToolkit } from "./toolkits/attachment/tools.ts";
@@ -117,7 +119,7 @@ const unauthorized = (input: {
   return HttpServerResponse.jsonUnsafe(
     {
       error: "invalid_mcp_credential",
-      message: "A valid T3 Code MCP credential is required.",
+      message: "A valid Azon Beta MCP credential is required.",
     },
     {
       status: 401,
@@ -1265,6 +1267,10 @@ const layerThemeToolkit = toolkitRegistration(ThemeToolkit, ThemeHandlers.layer)
   Layer.provide(ThreadCommandExecutor.layer),
 );
 
+const layerPluginsToolkit = toolkitRegistration(PluginsToolkit, PluginsHandlers.layer).pipe(
+  Layer.provide(ThreadCommandExecutor.layer),
+);
+
 export const layerProjectRegistration = toolkitRegistration(ProjectToolkit, ProjectHandlers.layer);
 
 export const layerAttachmentToolkit = toolkitRegistration(
@@ -1313,7 +1319,7 @@ export const layerInProcessMcpServer = McpServer.middleware<{
 
 export const layerMcpTransport = <RA, RE, RR>(registrations: Layer.Layer<RA, RE, RR>) =>
   McpServer.layerHttp({
-    name: "T3 Code",
+    name: "Azon Beta",
     version: packageJson.version,
     path: "/mcp",
     // The first protocol is the fallback for clients that offer an unknown version.
@@ -1331,6 +1337,7 @@ export const layerTools = Layer.mergeAll(
   layerProjectRegistration,
   layerEnvironmentToolkit,
   layerThemeToolkit,
+  layerPluginsToolkit,
   layerPreviewControlsRegistration,
   layerWorktreeToolkitRegistration,
   layerPullRequestsToolkit,

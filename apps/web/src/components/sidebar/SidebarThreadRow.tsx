@@ -113,6 +113,7 @@ import { ProjectFavicon, type ProjectFaviconProject } from "../ProjectFavicon";
 import { ThreadSearchMatchExcerpt } from "../ThreadSearchMatch";
 import { makeWorkspaceFileDropHandlers } from "../chat/workspaceFileDrop";
 import { ProviderInstanceIcon } from "../chat/ProviderInstanceIcon";
+import { useUiStyle } from "../../hooks/useSettings";
 import { getTriggerDisplayModelName } from "../chat/providerIconUtils";
 import { shouldShowInstanceBadge, type ProviderInstanceEntry } from "../../providerInstances";
 import { useThreadRunningTerminalIds } from "../../state/terminalSessions";
@@ -380,6 +381,7 @@ function SnoozeMenuButton(props: {
   environmentId: EnvironmentId;
 }) {
   const { open, onOpenChange, onSnooze, timestampFormat, environmentId } = props;
+  const azonLayout = useUiStyle() === "azon";
   const presets = open
     ? // oxlint-disable-next-line react/purity -- Presets are resolved only while the menu is open, so each opening reads a fresh time.
       resolveSnoozePresets(new Date(), timestampFormat, environmentId)
@@ -403,6 +405,7 @@ function SnoozeMenuButton(props: {
           }
         >
           <ClockIcon className="size-3" />
+          {azonLayout ? <span>Snooze</span> : null}
         </TooltipTrigger>
         <TooltipPopup>Snooze thread</TooltipPopup>
       </Tooltip>

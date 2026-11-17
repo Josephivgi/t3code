@@ -646,7 +646,7 @@ describe("buildThreadActionItems", () => {
     });
     const items = buildThreadActionItems({
       threads: [idThread, titleThread],
-      projectByKey: new Map([[`${LOCAL_ENVIRONMENT_ID}:${PROJECT_ID}`, { title: "T3 Code" }]]),
+      projectByKey: new Map([[`${LOCAL_ENVIRONMENT_ID}:${PROJECT_ID}`, { title: "Azon Beta" }]]),
       icon: null,
       runThread: async (_thread) => undefined,
     });
@@ -821,8 +821,8 @@ describe("filterPinnedBrowseEntries", () => {
 it.each([
   "#10839",
   "10839",
-  "pingdotgg/t3code#10839",
-  "https://github.com/pingdotgg/t3code/pull/10839",
+  "Josephivgi/azon#10839",
+  "https://github.com/Josephivgi/azon/pull/10839",
 ])("finds linked threads from PR query %s", (query) => {
   const items = buildThreadActionItems({
     threads: [
@@ -831,9 +831,9 @@ it.each([
         pullRequests: [
           {
             host: "github.com",
-            repository: "pingdotgg/t3code",
+            repository: "Josephivgi/azon",
             number: 10839,
-            url: "https://github.com/pingdotgg/t3code/pull/10839",
+            url: "https://github.com/Josephivgi/azon/pull/10839",
             source: "manual",
             linkedAt: "2026-09-08T00:00:00Z",
             snapshot: null,

@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type ComponentType,
   type KeyboardEvent,
 } from "react";
@@ -25,6 +26,7 @@ import {
   KeyRoundIcon,
   MicIcon,
   PaletteIcon,
+  PuzzleIcon,
   SearchIcon,
   ServerIcon,
   Settings2Icon,
@@ -37,6 +39,7 @@ import { resolveEventKeys } from "@t3tools/shared/keybindings";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { T, useGT, useMessages } from "gt-react";
 
+import { getSmallTools, smallToolSection, subscribeSmallTools } from "../../plugins/smallTools";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Kbd } from "../ui/kbd";
@@ -92,6 +95,7 @@ const SETTINGS_SECTION_ICONS: Readonly<
   "/settings/diagnostics": WrenchIcon,
   "/settings/voice": MicIcon,
   "/settings/appearance": PaletteIcon,
+  "/settings/plugins": PuzzleIcon,
   "/settings/chat": MessageSquareTextIcon,
   "/settings/diffs": FileDiffIcon,
   "/settings/projects": PanelsTopLeftIcon,
@@ -141,6 +145,17 @@ export function SettingsSidebarNav({ pathname }: { pathname: string }) {
   // Below md the nav is an icon rail; searching expands it over the page.
   const [compactSearchOpen, setCompactSearchOpen] = useState(false);
   const [activeResultIndex, setActiveResultIndex] = useState(0);
+  const smallTools = useSyncExternalStore(subscribeSmallTools, getSmallTools);
+  const toolsByHeading = new Map<string, Array<(typeof smallTools)[number]>>();
+  for (const tool of smallTools) {
+    const heading = smallToolSection(tool);
+    toolsByHeading.set(heading, [...(toolsByHeading.get(heading) ?? []), tool]);
+  }
+  const pluginSections = Array.from(toolsByHeading, ([heading, tools]) => ({ heading, tools }));
+  const toolSegment = pathname.startsWith("/settings/small-tools/")
+    ? pathname.slice("/settings/small-tools/".length)
+    : null;
+  const activeToolKey = toolSegment === null ? null : decodeURIComponent(toolSegment);
   const searchableItems = useAvailableSettingsSearchItems();
   const results = searchSettings(query, searchableItems, m);
   const isSearching = query.trim().length > 0;
@@ -414,6 +429,56 @@ export function SettingsSidebarNav({ pathname }: { pathname: string }) {
                                     )}
                                   >
                                     {m(SETTINGS_SECTION_LABELS[to])}
+                                  </span>
+                                </SidebarMenuButton>
+                              </SidebarMenuItem>
+                            );
+                          })}
+                        </SidebarMenu>
+                      </div>
+                    </div>
+                  ))}
+                  {pluginSections.map((section) => (
+                    <div
+                      key={section.heading}
+                      className="flex flex-col gap-1 max-md:border-t max-md:border-sidebar-border max-md:pt-4"
+                    >
+                      <h3
+                        className={cn(
+                          "px-2 text-xs font-medium text-sidebar-muted-foreground/80",
+                          !compactSearchOpen && "max-md:sr-only",
+                        )}
+                      >
+                        {section.heading}
+                      </h3>
+                      <div role="group" aria-label={section.heading}>
+                        <SidebarMenu>
+                          {section.tools.map((tool) => {
+                            const isActive = activeToolKey === tool.key;
+                            return (
+                              <SidebarMenuItem key={tool.key}>
+                                <SidebarMenuButton
+                                  data-settings-section={`/settings/small-tools/${tool.key}`}
+                                  aria-current={isActive ? "page" : undefined}
+                                  isActive={isActive}
+                                  onClick={() =>
+                                    void navigate({
+                                      to: "/settings/small-tools/$tool",
+                                      params: { tool: tool.key },
+                                      hash: "",
+                                      replace: true,
+                                      hashScrollIntoView: false,
+                                    })
+                                  }
+                                >
+                                  <WrenchIcon />
+                                  <span
+                                    className={cn(
+                                      "truncate",
+                                      !compactSearchOpen && "max-md:sr-only",
+                                    )}
+                                  >
+                                    {tool.title}
                                   </span>
                                 </SidebarMenuButton>
                               </SidebarMenuItem>

@@ -3004,6 +3004,7 @@ export default function Sidebar({ routeReveal }: { routeReveal: SidebarRouteReve
                   <ComboboxTrigger
                     render={
                       <SidebarHeaderIconButton
+                        azonLabel="Filter"
                         label={
                           scopedProjectGroups.length > 0
                             ? `Filter threads by project: ${scopedProjectGroups.map((project) => project.displayName).join(", ")}`

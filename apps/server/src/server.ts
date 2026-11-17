@@ -104,6 +104,8 @@ import * as PreviewBrowser from "./preview/PreviewBrowser.ts";
 import * as ProcessRunner from "./processRunner.ts";
 import * as GitManager from "./git/GitManager.ts";
 import * as EnvironmentTheme from "./environmentTheme.ts";
+import * as PluginStore from "./plugins/PluginStore.ts";
+import * as PluginHttp from "./plugins/http.ts";
 import * as Keybindings from "./keybindings.ts";
 import * as ServerRuntimeStartup from "./serverRuntimeStartup.ts";
 import * as ServerOwnership from "./serverOwnership.ts";
@@ -723,6 +725,7 @@ const layerRuntimeCoreDependenciesBase = Layer.mergeAll(
   Layer.provideMerge(SecretResolver.layer),
   // Above the settings it writes when a theme is applied.
   Layer.provideMerge(EnvironmentTheme.layer),
+  Layer.provideMerge(PluginStore.layer),
   Layer.provideMerge(layerServerSettings),
   Layer.provideMerge(layerSourceControlProviderRegistry),
   Layer.provideMerge(layerGit),
@@ -829,6 +832,7 @@ const layerMakeRoutes = Layer.mergeAll(
       Layer.provide(OrchestrationHttp.layer),
       Layer.provide(PullRequestHttp.layer),
       Layer.provide(ProjectHttp.layer),
+      Layer.provide(PluginHttp.layer),
       Layer.provide(speechHttpApiLayer),
       Layer.provide(ServerHttp.layerServerEnvironmentHttpApi),
       Layer.provide(WebhookRoute.layer.pipe(Layer.provide(RelayDeliveryProof.layer))),
@@ -847,6 +851,17 @@ const layerMakeRoutes = Layer.mergeAll(
   McpHttpServer.layer.pipe(
     Layer.provide(ProviderAdapterRegistry.layerFromProviderInstanceRegistry),
     Layer.provide(McpOAuth.layerMcpClientAuthenticator),
+  ),
+  // A plugin that fails to start is turned off by the store; that is never fatal to the server.
+  // Started in the background so a slow server.js cannot hold up the server; each one is capped.
+  Layer.effectDiscard(
+    PluginStore.PluginStore.pipe(
+      Effect.flatMap((store) =>
+        store.activateServerPlugins.pipe(Effect.andThen(store.watchServerPlugins)),
+      ),
+      Effect.catch((cause) => Effect.logWarning("Server plugins could not be loaded.", cause)),
+      Effect.forkDetach,
+    ),
   ),
   // Follows delegated tasks running in linked environments, including after a restart.
   Layer.effectDiscard(

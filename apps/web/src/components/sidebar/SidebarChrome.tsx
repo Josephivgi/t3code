@@ -1,10 +1,10 @@
 import { ArrowLeftIcon, ArrowRightIcon, ChartNoAxesColumnIcon, SettingsIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 
 import { useAtomValue } from "@effect/atom-react";
-import { useEnvironmentIdentificationMode } from "../../hooks/useSettings";
+import { useEnvironmentIdentificationMode, useUiStyle } from "../../hooks/useSettings";
 import { shortcutLabelForCommand } from "../../keybindings";
 import {
   navigateHistory,
@@ -14,7 +14,6 @@ import {
 import { primaryServerKeybindingsAtom } from "../../state/server";
 import { cn } from "../../lib/utils";
 import { usePullRequestsSupported } from "../../state/environments";
-import { T3Wordmark } from "../T3Wordmark";
 import {
   resolveEnvironmentIdentificationPillLabel,
   resolveSidebarStageBackdropVariant,
@@ -165,7 +164,7 @@ function HistoryNavigationButton({
 function SidebarBrand({ onBackdrop }: { onBackdrop: boolean }) {
   return (
     <Link
-      aria-label="T3 Code home"
+      aria-label="Azon Beta home"
       className={cn(
         "relative z-10 ml-[var(--workspace-titlebar-content-left)] hidden h-7 w-fit min-w-0 shrink-0 items-center overflow-hidden rounded-md outline-hidden ring-ring focus-visible:ring-2 focus-visible:ring-inset md:flex",
         onBackdrop ? "text-white" : "text-foreground",
@@ -180,14 +179,14 @@ function SidebarBrand({ onBackdrop }: { onBackdrop: boolean }) {
 function SidebarBrandMark({ onBackdrop }: { onBackdrop: boolean }) {
   return (
     <span className="inline-flex min-w-0 items-baseline gap-1 text-sm font-medium tracking-tight">
-      <T3Wordmark aria-label="T3" className="h-[1cap] w-auto shrink-0" />
+      <span className="shrink-0 font-semibold text-foreground">Azon</span>
       <span
         className={cn(
           "truncate [text-box:trim-both_cap_alphabetic] supports-[text-box:trim-both_cap_alphabetic]:py-1",
           onBackdrop ? "text-white/70" : "text-muted-foreground",
         )}
       >
-        Code
+        Beta
       </span>
     </span>
   );
@@ -197,11 +196,23 @@ function SidebarUtilityItem({
   icon,
   label,
   onClick,
+  labeled,
 }: {
   icon: ReactNode;
   label: string;
   onClick: () => void;
+  labeled?: boolean;
 }) {
+  if (labeled) {
+    return (
+      <SidebarMenuItem className="min-w-0">
+        <SidebarMenuButton aria-label={label} onClick={onClick} className="h-9">
+          {icon}
+          <span className="truncate">{label}</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  }
   return (
     <SidebarMenuItem className="shrink-0">
       <Tooltip>
@@ -226,6 +237,7 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
     select: (location) => isSidebarUtilityPage(location.pathname),
   });
   const pullRequestsSupported = usePullRequestsSupported();
+  const azonLayout = useUiStyle() === "azon";
   const closeMobileSidebar = () => {
     if (isMobile) {
       setOpenMobile(false);
@@ -256,7 +268,7 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
   };
 
   return (
-    <SidebarMenu className="flex-row items-center">
+    <SidebarMenu className={azonLayout ? "flex-col items-stretch" : "flex-row items-center"}>
       {isOnUtilityPage ? (
         <SidebarMenuItem className="min-w-0 flex-1">
           <SidebarMenuButton onClick={handleBackClick}>
@@ -269,18 +281,21 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
           <SidebarUtilityItem
             icon={<SettingsIcon />}
             label="Settings"
+            labeled={azonLayout}
             onClick={handleSettingsClick}
           />
           {pullRequestsSupported ? (
             <SidebarUtilityItem
               icon={<PullRequestGlyph.pullRequest />}
               label="Pull requests"
+              labeled={azonLayout}
               onClick={handlePullRequestsClick}
             />
           ) : null}
           <SidebarUtilityItem
             icon={<ChartNoAxesColumnIcon />}
             label="Usage"
+            labeled={azonLayout}
             onClick={handleUsageClick}
           />
         </>
@@ -292,6 +307,11 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
 });
 
 export const SidebarChromeFooter = memo(function SidebarChromeFooter() {
+  const uiStyle = useUiStyle();
+  // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- stamps the app's look on the root element so CSS can restyle it
+  useEffect(() => {
+    document.documentElement.dataset.uiStyle = uiStyle;
+  }, [uiStyle]);
   return (
     <SidebarFooter>
       <SidebarProviderUpdatePill />

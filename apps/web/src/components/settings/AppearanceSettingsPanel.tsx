@@ -6,6 +6,7 @@ import {
   type ChatWidth,
   type EffortDisplay,
   type EnvironmentIdentificationMode,
+  type UiStyle,
   MAX_APPEARANCE_CONTRAST,
   MAX_GLASS_OPACITY,
   MAX_PANEL_ANIMATION_DURATION_MS,
@@ -77,6 +78,11 @@ const CHAT_WIDTH_LABELS: Record<ChatWidth, string> = {
   comfortable: "Comfortable",
   wide: "Wide",
   full: "Full",
+};
+
+const UI_STYLE_LABELS: Record<UiStyle, string> = {
+  "t3-code": "T3 Code",
+  azon: "Azon",
 };
 
 const EFFORT_DISPLAY_LABELS: Record<EffortDisplay, string> = {
@@ -253,6 +259,30 @@ export function AppearanceSettingsPanel() {
                 type="range"
                 value={settings.glassOpacity}
               />
+            </div>
+          }
+        />
+
+        <SettingsRow
+          {...searchableSetting("ui-style")}
+          title="UI"
+          description="Azon labels the sidebar and puts effort levels under the model list."
+          control={
+            <div className="w-full sm:w-40">
+              <Select
+                value={settings.uiStyle}
+                onValueChange={(value) => {
+                  if (value === "t3-code" || value === "azon") updateSettings({ uiStyle: value });
+                }}
+              >
+                <SelectTrigger size="sm" className="w-full min-w-0" aria-label="UI">
+                  <SelectValue>{UI_STYLE_LABELS[settings.uiStyle]}</SelectValue>
+                </SelectTrigger>
+                <SelectPopup align="end" alignItemWithTrigger={false}>
+                  <SelectItem value="t3-code">T3 Code</SelectItem>
+                  <SelectItem value="azon">Azon</SelectItem>
+                </SelectPopup>
+              </Select>
             </div>
           }
         />
