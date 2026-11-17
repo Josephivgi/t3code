@@ -39,6 +39,22 @@ type LoadState =
   | { readonly phase: "ready"; readonly key: number; readonly data: JTokensUsageData }
   | { readonly phase: "error"; readonly key: number; readonly message: string };
 
+function isUsageData(value: unknown): value is JTokensUsageData {
+  if (typeof value !== "object" || value === null) return false;
+  const v = value as Record<string, unknown>;
+  const totals = v.totals as Record<string, unknown> | null | undefined;
+  return (
+    typeof totals === "object" &&
+    totals !== null &&
+    typeof totals.tokens === "number" &&
+    typeof totals.costUsd === "number" &&
+    typeof totals.requests === "number" &&
+    Array.isArray(v.harnesses) &&
+    Array.isArray(v.models) &&
+    Array.isArray(v.days)
+  );
+}
+
 const compact = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 2 });
 const money = new Intl.NumberFormat("en", { style: "currency", currency: "USD" });
 
@@ -57,8 +73,14 @@ export function JTokensUsage(props: {
     onLoadingChange(true);
     callPlugin("jtokens", "usage", { force: reloadKey > 0 })
       .then((result) => {
-        if (!cancelled)
-          setState({ phase: "ready", key: reloadKey, data: result as JTokensUsageData });
+        if (cancelled) return;
+        if (isUsageData(result)) setState({ phase: "ready", key: reloadKey, data: result });
+        else
+          setState({
+            phase: "error",
+            key: reloadKey,
+            message: "The JTokens plugin returned data in an unexpected shape.",
+          });
       })
       .catch((cause: unknown) => {
         if (!cancelled) {
