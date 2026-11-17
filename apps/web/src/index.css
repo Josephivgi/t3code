@@ -2697,20 +2697,20 @@ code {
 [data-ui-style="azon"] [data-slot="sidebar-inset"] > header {
   border-bottom: 1px solid var(--contrast-toolbar-border, var(--border, #e4e4e7));
 }
-[data-ui-style="azon"] [aria-label="Thread breadcrumb"] ol {
+[data-ui-style="azon"] [data-thread-trail] ol {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
   gap: 0;
 }
-[data-ui-style="azon"] [aria-label="Thread breadcrumb"] ol > li[aria-hidden="true"] {
+[data-ui-style="azon"] [data-thread-trail] ol > li[aria-hidden="true"] {
   display: none;
 }
-[data-ui-style="azon"] [aria-label="Thread breadcrumb"] ol > li:first-child:not(:last-child) {
+[data-ui-style="azon"] [data-thread-trail] ol > li:first-child:not(:last-child) {
   font-size: 0.6875rem;
   line-height: 1.1;
 }
-[data-ui-style="azon"] [aria-label="Thread breadcrumb"] h2 {
+[data-ui-style="azon"] [data-thread-trail] h2 {
   font-size: 0.9375rem;
   font-weight: 600;
   letter-spacing: -0.01em;

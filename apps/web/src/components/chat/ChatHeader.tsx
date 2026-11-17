@@ -260,6 +260,7 @@ export const ChatHeader = memo(function ChatHeader({
     >
       <WorkspaceBreadcrumb
         ariaLabel="Thread breadcrumb"
+        threadTrail
         className="flex-1 overflow-clip [overflow-clip-margin:2px]"
       >
         {activeProject ? (
