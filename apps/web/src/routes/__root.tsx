@@ -11,7 +11,7 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
 
 import { APP_DISPLAY_NAME, APP_VERSION } from "../branding";
 import { AppSidebarLayout } from "../components/AppSidebarLayout";
@@ -133,7 +133,7 @@ function RootRouteNotFoundView() {
 function RootRouteView() {
   const uiStyle = useUiStyle();
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- stamps the app's look on the root element so CSS can restyle every page, including ones without a sidebar
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.dataset.uiStyle = uiStyle;
   }, [uiStyle]);
   // Above every branch: app services raise toasts for the whole page, so the surface they write to

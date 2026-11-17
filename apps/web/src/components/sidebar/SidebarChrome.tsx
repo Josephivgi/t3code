@@ -365,20 +365,22 @@ export const SidebarAzonNav = memo(function SidebarAzonNav() {
     },
   ];
   return (
-    <SidebarMenu aria-label="Azon navigation" className="flex-col items-stretch">
-      {items.map((item) => (
-        <SidebarMenuItem key={item.key} className="min-w-0">
-          <SidebarMenuButton
-            isActive={item.active}
-            aria-current={item.active ? "page" : undefined}
-            onClick={item.onClick}
-          >
-            {item.icon}
-            <span className="truncate">{item.label}</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
-    </SidebarMenu>
+    <nav aria-label="Azon navigation">
+      <SidebarMenu className="flex-col items-stretch">
+        {items.map((item) => (
+          <SidebarMenuItem key={item.key} className="min-w-0">
+            <SidebarMenuButton
+              isActive={item.active}
+              aria-current={item.active ? "page" : undefined}
+              onClick={item.onClick}
+            >
+              {item.icon}
+              <span className="truncate">{item.label}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    </nav>
   );
 });
 

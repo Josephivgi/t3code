@@ -36,6 +36,7 @@ import { useUiStyle } from "../../hooks/useSettings";
 
 export function AssistantTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" }> }) {
   const ctx = use(TimelineRowCtx);
+  const azonLayout = useUiStyle() === "azon";
   // The timeline holds a streaming message's row while only its text grows.
   const liveText = useAssistantMessageText(
     row.message.streaming ? ctx.threadRef : null,
@@ -97,6 +98,7 @@ export function AssistantTimelineRow({ row }: { row: Extract<TimelineRow, { kind
             message={row.message}
             showCopyButton={row.showAssistantCopyButton}
             copyStreaming={row.assistantCopyStreaming}
+            alwaysVisible={azonLayout}
           />
         ) : null}
       </div>
