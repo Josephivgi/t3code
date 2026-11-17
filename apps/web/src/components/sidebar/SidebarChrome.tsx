@@ -1,4 +1,10 @@
-import { ArrowLeftIcon, ArrowRightIcon, ChartNoAxesColumnIcon, SettingsIcon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ChartNoAxesColumnIcon,
+  MessagesSquareIcon,
+  SettingsIcon,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { memo, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
@@ -284,7 +290,7 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
             labeled={azonLayout}
             onClick={handleSettingsClick}
           />
-          {pullRequestsSupported ? (
+          {pullRequestsSupported && !azonLayout ? (
             <SidebarUtilityItem
               icon={<PullRequestGlyph.pullRequest />}
               label="Pull requests"
@@ -292,16 +298,78 @@ const SidebarUtilityMenu = memo(function SidebarUtilityMenu() {
               onClick={handlePullRequestsClick}
             />
           ) : null}
-          <SidebarUtilityItem
-            icon={<ChartNoAxesColumnIcon />}
-            label="Usage"
-            labeled={azonLayout}
-            onClick={handleUsageClick}
-          />
+          {azonLayout ? null : (
+            <SidebarUtilityItem
+              icon={<ChartNoAxesColumnIcon />}
+              label="Usage"
+              labeled={azonLayout}
+              onClick={handleUsageClick}
+            />
+          )}
         </>
       )}
       <SidebarThreadUndoNotice />
       <SidebarUpdatePill />
+    </SidebarMenu>
+  );
+});
+
+/** Azon layout: the app's main places as one labeled list at the top of the sidebar. */
+export const SidebarAzonNav = memo(function SidebarAzonNav() {
+  const navigate = useNavigate();
+  const navigateToMainApp = useNavigateToMainApp();
+  const { isMobile, setOpenMobile } = useSidebar();
+  const pathname = useLocation({ select: (location) => location.pathname });
+  const pullRequestsSupported = usePullRequestsSupported();
+  const closeMobileSidebar = () => {
+    if (isMobile) setOpenMobile(false);
+  };
+  const items = [
+    {
+      key: "threads",
+      label: "Threads",
+      icon: <MessagesSquareIcon />,
+      active: !isSidebarUtilityPage(pathname),
+      onClick: () => {
+        closeMobileSidebar();
+        void navigateToMainApp();
+      },
+    },
+    ...(pullRequestsSupported
+      ? [
+          {
+            key: "pull-requests",
+            label: "Pull requests",
+            icon: <PullRequestGlyph.pullRequest />,
+            active: pathname.startsWith("/pull-requests"),
+            onClick: () => {
+              closeMobileSidebar();
+              void navigate({ to: "/pull-requests", search: readPullRequestListPreferences() });
+            },
+          },
+        ]
+      : []),
+    {
+      key: "usage",
+      label: "Usage",
+      icon: <ChartNoAxesColumnIcon />,
+      active: pathname.startsWith("/usage"),
+      onClick: () => {
+        closeMobileSidebar();
+        void navigate({ to: "/usage" });
+      },
+    },
+  ];
+  return (
+    <SidebarMenu aria-label="Azon navigation" className="flex-col items-stretch">
+      {items.map((item) => (
+        <SidebarMenuItem key={item.key} className="min-w-0">
+          <SidebarMenuButton isActive={item.active} onClick={item.onClick}>
+            {item.icon}
+            <span className="truncate">{item.label}</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
     </SidebarMenu>
   );
 });

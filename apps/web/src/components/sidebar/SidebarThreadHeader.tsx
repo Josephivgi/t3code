@@ -11,6 +11,7 @@ import { cn } from "~/lib/utils";
 import { useUiStyle } from "../../hooks/useSettings";
 import { Button } from "../ui/button";
 import { SidebarInput, SidebarMenuButton } from "../ui/sidebar";
+import { SidebarAzonNav } from "./SidebarChrome";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 
 export interface SidebarThreadHeaderProps {
@@ -112,6 +113,7 @@ export function SidebarThreadHeader({
           <span className="truncate">{newThreadLabel}</span>
         </Button>
         {searchBox}
+        <SidebarAzonNav />
         {hasProjects ? (
           <div className="flex items-center gap-1">
             <Button
