@@ -6,7 +6,7 @@ import {
   SettingsIcon,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 
 import { useAtomValue } from "@effect/atom-react";
@@ -368,7 +368,11 @@ export const SidebarAzonNav = memo(function SidebarAzonNav() {
     <SidebarMenu aria-label="Azon navigation" className="flex-col items-stretch">
       {items.map((item) => (
         <SidebarMenuItem key={item.key} className="min-w-0">
-          <SidebarMenuButton isActive={item.active} onClick={item.onClick}>
+          <SidebarMenuButton
+            isActive={item.active}
+            aria-current={item.active ? "page" : undefined}
+            onClick={item.onClick}
+          >
             {item.icon}
             <span className="truncate">{item.label}</span>
           </SidebarMenuButton>
@@ -379,11 +383,6 @@ export const SidebarAzonNav = memo(function SidebarAzonNav() {
 });
 
 export const SidebarChromeFooter = memo(function SidebarChromeFooter() {
-  const uiStyle = useUiStyle();
-  // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- stamps the app's look on the root element so CSS can restyle it
-  useEffect(() => {
-    document.documentElement.dataset.uiStyle = uiStyle;
-  }, [uiStyle]);
   return (
     <SidebarFooter>
       <SidebarProviderUpdatePill />

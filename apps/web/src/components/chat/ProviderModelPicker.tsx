@@ -429,7 +429,13 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
               <TooltipPopup side="top">{triggerTooltipContent}</TooltipPopup>
             </Tooltip>
           )}
-          {props.triggerSuffix}
+          {azonLayout && props.triggerSuffix ? (
+            <span className="ms-1 border-s border-border/70 ps-1.5 text-xs text-muted-foreground">
+              {props.triggerSuffix}
+            </span>
+          ) : (
+            props.triggerSuffix
+          )}
           {selectedModel?.isUnavailable && !selectedEntries && props.triggerLabel === undefined ? (
             <Badge variant="outline" size="sm">
               Unavailable
@@ -475,11 +481,13 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
               <div
                 className={cn(
                   "flex min-h-0 max-sm:h-auto max-sm:flex-col",
-                  azonLayout ? "max-h-[calc(var(--available-height)-3.5rem)] flex-col" : "h-86.5",
+                  azonLayout
+                    ? "h-96 max-h-[calc(var(--available-height)-3.5rem)] flex-col"
+                    : "h-86.5",
                 )}
               >
                 {azonLayout ? (
-                  <div className="flex h-56 min-h-0 shrink flex-col overflow-hidden [&>*]:min-h-0 [&>*]:flex-1">
+                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden [&>*]:min-h-0 [&>*]:flex-1">
                     {picker}
                   </div>
                 ) : (
@@ -490,7 +498,7 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
                   className={cn(
                     "flex min-h-0 flex-col bg-muted/40 max-sm:h-64 max-sm:w-full max-sm:border-t max-sm:border-l-0",
                     azonLayout
-                      ? "max-h-56 w-full shrink-0 overflow-y-auto border-t border-border/70"
+                      ? "h-36 w-full shrink-0 overflow-y-auto border-t border-border/70"
                       : "w-48 border-l border-border/70 sm:shrink-0",
                   )}
                   data-effort-placement={azonLayout ? "below" : "side"}

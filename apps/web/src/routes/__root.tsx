@@ -41,7 +41,7 @@ import { Button } from "../components/ui/button";
 import { StandalonePage, StandalonePageHeader } from "../components/ui/standalone-page";
 import { AnchoredToastProvider, ToastProvider } from "../components/ui/toast";
 import { isElectron } from "../env";
-import { useClientSettings } from "../hooks/useSettings";
+import { useClientSettings, useUiStyle } from "../hooks/useSettings";
 import {
   deriveLogicalProjectKeyFromSettings,
   derivePhysicalProjectKeyFromPath,
@@ -131,6 +131,11 @@ function RootRouteNotFoundView() {
 }
 
 function RootRouteView() {
+  const uiStyle = useUiStyle();
+  // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- stamps the app's look on the root element so CSS can restyle every page, including ones without a sidebar
+  useEffect(() => {
+    document.documentElement.dataset.uiStyle = uiStyle;
+  }, [uiStyle]);
   // Above every branch: app services raise toasts for the whole page, so the surface they write to
   // must not unmount when the root switches branches (for example /welcome to the app shell).
   return (

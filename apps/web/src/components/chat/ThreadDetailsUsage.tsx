@@ -20,6 +20,7 @@ import type { ContextWindowSnapshot } from "@t3tools/client-runtime/state/contex
 import { formatContextWindowTokens } from "../../lib/contextWindow";
 import { cn } from "../../lib/utils";
 import { formatUpcomingTimestamp } from "../../timestampFormat";
+import { useUiStyle } from "../../hooks/useSettings";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import { formatContextWindowCompactionMessage } from "./compaction.logic";
 import { ThreadDetailsSection } from "./ThreadDetailsSection";
@@ -45,6 +46,7 @@ export function ThreadDetailsUsage({
   providers,
   sources,
 }: Omit<ThreadDetailsUsageInput, "contextWindow">) {
+  const azonLayout = useUiStyle() === "azon";
   const nowMinute = useNowMinute();
   const now = Date.parse(`${nowMinute}:00Z`);
   const report =
@@ -63,7 +65,7 @@ export function ThreadDetailsUsage({
     <ThreadDetailsSection
       headingId="thread-details-usage-heading"
       title="Usage limits"
-      showHeading={false}
+      showHeading={azonLayout}
     >
       <div className="grid grid-cols-[auto_minmax(3rem,1fr)_auto] gap-x-3 text-xs">
         {notice ? (
@@ -84,6 +86,7 @@ export function ThreadDetailsUsage({
 
 /** The thread's context window. The bar fills as context is used; the tick marks auto-compaction. */
 export function ThreadDetailsContext({ usage }: { readonly usage: ContextWindowSnapshot }) {
+  const azonLayout = useUiStyle() === "azon";
   const maxTokens = usage.maxTokens != null && usage.maxTokens > 0 ? usage.maxTokens : null;
   const used =
     maxTokens !== null && usage.usedPercentage !== null
@@ -99,7 +102,7 @@ export function ThreadDetailsContext({ usage }: { readonly usage: ContextWindowS
     <ThreadDetailsSection
       headingId="thread-details-context-heading"
       title="Context window"
-      showHeading={false}
+      showHeading={azonLayout}
     >
       <div className="grid grid-cols-[auto_minmax(3rem,1fr)_auto] gap-x-3 text-xs">
         <UsageRow

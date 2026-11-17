@@ -2641,7 +2641,7 @@ code {
   outline: none;
 }
 
-/* Azon layout: labeled, roomier sidebar rows. Set by Settings > Appearance > UI. */
+/* Azon layout. Set by Settings > Appearance > UI. */
 [data-ui-style="azon"] [data-sidebar="footer"] {
   border-top: 1px solid var(--sidebar-border, var(--border));
   padding-top: 0.5rem;
@@ -2654,15 +2654,13 @@ code {
 [data-ui-style="azon"] [data-sidebar="menu-button"] {
   border-radius: 0.5rem;
 }
-
-/* Azon layout: sidebar cards, header bar, message bubbles, composer card */
 [data-ui-style="azon"] [data-slot="sidebar-container"] {
   background: color-mix(in srgb, var(--muted, #f4f4f5) 55%, var(--background, #fff));
 }
 [data-ui-style="azon"] [data-testid="sidebar-row-card"] {
   border: 1px solid color-mix(in srgb, var(--border, #e4e4e7) 80%, transparent);
   border-radius: 0.875rem;
-  background: var(--background, #fff);
+  background: var(--card, var(--background, #fff));
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
   transition:
     border-color 120ms,
@@ -2681,12 +2679,42 @@ code {
 [data-ui-style="azon"] [data-slot="sidebar-group"] ul {
   gap: 0.25rem;
 }
+[data-ui-style="azon"]
+  [aria-label="Azon navigation"]
+  [data-sidebar="menu-button"][aria-current="page"] {
+  background: color-mix(in srgb, var(--primary, #4f46e5) 12%, transparent);
+  color: var(--primary, #4f46e5);
+  font-weight: 600;
+}
+
+/* Header: project above the title, title menu arrow always visible. */
 [data-ui-style="azon"] [data-slot="sidebar-inset"] > header,
 [data-ui-style="azon"] [data-slot="sidebar-inset"] header:first-of-type {
   border-bottom: 1px solid var(--border, #e4e4e7);
-  background: color-mix(in srgb, var(--background, #fff) 92%, transparent);
-  backdrop-filter: blur(8px);
 }
+[data-ui-style="azon"] [aria-label="Thread breadcrumb"] ol {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+}
+[data-ui-style="azon"] [aria-label="Thread breadcrumb"] ol > li.shrink-0 {
+  display: none;
+}
+[data-ui-style="azon"] [aria-label="Thread breadcrumb"] ol > li:not(:last-child) {
+  font-size: 0.6875rem;
+  line-height: 1.1;
+}
+[data-ui-style="azon"] [aria-label="Thread breadcrumb"] h2 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+[data-ui-style="azon"] [data-thread-title-chevron] {
+  opacity: 1;
+}
+
+/* Composer: input on top, a toolbar band below with attach split from the rest. */
 [data-ui-style="azon"] [data-slot="composer-shell"] {
   border-radius: 1.25rem;
   border: 1px solid var(--border, #e4e4e7);
@@ -2701,26 +2729,53 @@ code {
     0 0 0 3px color-mix(in srgb, var(--primary, #4f46e5) 18%, transparent),
     0 8px 28px rgb(0 0 0 / 0.1);
 }
+[data-ui-style="azon"] [data-chat-composer-footer] {
+  border-top: 1px solid var(--border, #e4e4e7);
+  padding-top: 0.5rem;
+}
+[data-ui-style="azon"] [data-chat-composer-footer] > div.me-2 {
+  margin-inline-end: 0.5rem;
+  padding-inline-end: 0.5rem;
+  border-inline-end: 1px solid var(--border, #e4e4e7);
+}
+[data-ui-style="azon"] [data-chat-composer-primary-actions-compact] button.h-9,
+[data-ui-style="azon"] [data-chat-composer-footer] button.h-9 {
+  min-width: 5.75rem;
+  justify-content: center;
+}
 
-[data-ui-style="azon"] [data-message-role="user"] > div > div:first-child {
+/* Timeline: bubbles, a rule beside the agent's text, always-visible message actions, work as cards. */
+[data-ui-style="azon"] [data-user-message-bubble] {
   border-radius: 1.25rem 1.25rem 0.375rem 1.25rem;
   background: color-mix(in srgb, var(--primary, #4f46e5) 9%, var(--background, #fff));
   border: 1px solid color-mix(in srgb, var(--primary, #4f46e5) 22%, var(--border, #e4e4e7));
+  max-width: min(80%, 72ch);
 }
-[data-ui-style="azon"] [data-message-role="assistant"] {
+[data-ui-style="azon"] [data-message-role="assistant"] > div:first-child {
   border-left: 3px solid color-mix(in srgb, var(--primary, #4f46e5) 55%, transparent);
-  padding-left: 1rem;
+  padding-left: 0.75rem;
   margin-top: 0.5rem;
 }
-[data-ui-style="azon"] [data-slot="sidebar-inset"] h1.text-center {
-  font-size: 2.25rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  background: linear-gradient(120deg, var(--foreground, #18181b), var(--primary, #4f46e5));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+[data-ui-style="azon"] [data-message-role="assistant"] div.transition-opacity.opacity-0 {
+  opacity: 1;
 }
+[data-ui-style="azon"] [data-timeline-row-kind="work"],
+[data-ui-style="azon"] [data-timeline-row-kind="work-toggle"],
+[data-ui-style="azon"] [data-timeline-row-kind="work-live"] {
+  margin-block: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--muted, #f4f4f5) 40%, transparent);
+}
+
+/* Details panel: section titles in small caps. */
+[data-ui-style="azon"] [data-thread-details-card] section > div:first-child {
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Settings: open page is tinted. */
 [data-ui-style="azon"] [role="dialog"] [data-sidebar="menu-button"][aria-current="page"] {
   background: color-mix(in srgb, var(--primary, #4f46e5) 12%, transparent);
   color: var(--primary, #4f46e5);
@@ -2729,31 +2784,10 @@ code {
 [data-ui-style="azon"] [role="dialog"] [data-sidebar="menu-button"][aria-current="page"] > svg {
   color: var(--primary, #4f46e5);
 }
-[data-ui-style="azon"] [data-slot="sidebar-container"] [data-slot="button"] {
-  border-radius: 0.75rem;
-}
-[data-ui-style="azon"] [data-sidebar="footer"] [data-sidebar="menu-button"] {
-  border-radius: 0.75rem;
-}
-[data-ui-style="azon"] [data-sidebar="footer"] [data-sidebar="menu-button"]:hover {
-  background: color-mix(in srgb, var(--primary, #4f46e5) 10%, transparent);
-  color: var(--primary, #4f46e5);
-}
-[data-ui-style="azon"] [data-slot="sidebar-inset"] [data-slot="button"][data-variant="outline"] {
-  border-radius: 0.75rem;
-}
-[data-ui-style="azon"] [data-slot="sidebar-inset"] > * h1 {
-  letter-spacing: -0.02em;
-}
 
-[data-ui-style="azon"] [aria-label="Thread breadcrumb"] h2 {
-  font-size: 0.9375rem;
+/* Empty state headline. */
+[data-ui-style="azon"] [data-slot="sidebar-inset"] h1.text-center {
+  font-size: 2.25rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
-}
-[data-ui-style="azon"] [aria-label="Thread breadcrumb"] button[aria-label^="New thread in"] {
-  padding: 0.125rem 0.625rem;
-  border: 1px solid var(--border, #e4e4e7);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--muted, #f4f4f5) 60%, transparent);
+  letter-spacing: -0.03em;
 }
