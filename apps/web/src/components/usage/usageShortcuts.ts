@@ -2,12 +2,15 @@ import type { KeybindingCommand, ResolvedKeybindingsConfig } from "@t3tools/cont
 import type { UsageChartMetric } from "./UsageProviderChart";
 import { resolveShortcutCommand, type ShortcutEventLike } from "../../keybindings";
 
-export type UsageMetric = UsageChartMetric | "limits";
+export type UsageMetric = UsageChartMetric | "limits" | "jtokens";
 export const METRIC_OPTIONS = [
   { value: "cost", label: "Cost", command: "usage.cost" },
   { value: "tokens", label: "Tokens", command: "usage.tokens" },
   { value: "limits", label: "Limits", command: "usage.limits" },
 ] as const satisfies readonly { value: UsageMetric; label: string; command: KeybindingCommand }[];
+
+/** Fed by the JTokens plugin, so it has no keyboard command and shows only when that plugin is on. */
+export const JTOKENS_METRIC_OPTION = { value: "jtokens", label: "JTokens" } as const;
 
 export const WINDOW_OPTIONS = [
   { days: 1, label: "Past 24h", command: "usage.period.day" },

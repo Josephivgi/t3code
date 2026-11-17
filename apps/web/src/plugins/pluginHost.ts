@@ -147,6 +147,16 @@ export async function refreshPluginList(): Promise<PluginListResult> {
 /** Turns a plugin on or off. Turning it on clears its recorded failure. */
 export const setPluginEnabled = (id: string, enabled: boolean) => postState(id, { enabled });
 
+/** Runs a server method of an installed plugin from app code, e.g. a Usage tab fed by a plugin. */
+export async function callPlugin(id: string, method: string, args?: unknown): Promise<unknown> {
+  const answer = await requestJson<{ ok: boolean; result?: unknown; error?: string }>(
+    `/api/plugins/${encodeURIComponent(id)}/call`,
+    { method: "POST", body: JSON.stringify({ method, args }) },
+  );
+  if (!answer.ok) throw new Error(answer.error ?? `${method} failed.`);
+  return answer.result;
+}
+
 /** Deletes a plugin and its files. */
 export const deletePlugin = (id: string) =>
   requestJson<{ deleted: true }>(`/api/plugins/${encodeURIComponent(id)}/delete`, {

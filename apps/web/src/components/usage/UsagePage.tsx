@@ -1,5 +1,7 @@
 import { ChatGptUsageButton } from "../settings/ChatGptUsageButton";
 import { useUiStyle } from "../../hooks/useSettings";
+import { getPluginList, subscribePluginList } from "../../plugins/pluginHost";
+import { JTokensUsage } from "./JTokensUsage";
 import { usesChatGptSharing } from "@t3tools/shared/usageLimits";
 import { RefreshIcon } from "~/components/ui/refresh-icon";
 import { useAtomValue } from "@effect/atom-react";
@@ -11,7 +13,7 @@ import {
   type UsageSummaryInput,
 } from "@t3tools/contracts";
 import { CircleAlertIcon, ChevronDownIcon, InfoIcon, SlidersHorizontalIcon } from "lucide-react";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 import { settlePromise } from "@t3tools/client-runtime/state/runtime";
 import * as AsyncResult from "effect/reactivity/AsyncResult";
 import * as Cause from "effect/Cause";
@@ -91,6 +93,7 @@ import {
   tokenTypeSegments,
 } from "./usageBreakdown";
 import {
+  JTOKENS_METRIC_OPTION,
   METRIC_OPTIONS,
   WINDOW_OPTIONS,
   resolveUsageShortcut,
@@ -109,7 +112,7 @@ import {
 } from "./usagePagePreferences";
 
 function isUsageMetric(value: string | null | undefined): value is UsageMetric {
-  return METRIC_OPTIONS.some((option) => option.value === value);
+  return value === "jtokens" || METRIC_OPTIONS.some((option) => option.value === value);
 }
 
 function isUsageWindowDays(value: number): value is UsagePagePreferences["windowDays"] {
@@ -180,11 +183,15 @@ export function UsagePage() {
   const keybindings = useAtomValue(primaryServerKeybindingsAtom);
   const hour12 = usePrimarySettings((settings) => resolveHour12(settings.timestampFormat));
   const shortcutTitle = (
-    option: (typeof METRIC_OPTIONS)[number] | (typeof WINDOW_OPTIONS)[number],
+    option:
+      | (typeof METRIC_OPTIONS)[number]
+      | typeof JTOKENS_METRIC_OPTION
+      | (typeof WINDOW_OPTIONS)[number],
   ) => {
-    const shortcut = shortcutLabelForCommand(keybindings, option.command, {
-      context: { usagePageOpen: true },
-    });
+    const shortcut =
+      "command" in option
+        ? shortcutLabelForCommand(keybindings, option.command, { context: { usagePageOpen: true } })
+        : null;
     return shortcut ? `${option.label} (${shortcut})` : option.label;
   };
   const [windowSelection, setWindowSelection] = useState(() => ({
@@ -195,8 +202,24 @@ export function UsagePage() {
       preferences.windowDays === 1 ? "hour" : "day",
     ),
   }));
-  const metric = preferences.metric;
+  // The JTokens tab needs the JTokens plugin on; without it a saved JTokens choice shows Limits.
+  const jtokensAvailable = useSyncExternalStore(
+    subscribePluginList,
+    () =>
+      getPluginList()?.plugins.some(
+        (plugin) => plugin.id === "jtokens" && plugin.enabled && plugin.hasServer,
+      ) ?? false,
+    () => false,
+  );
+  const metric =
+    preferences.metric === "jtokens" && !jtokensAvailable ? "limits" : preferences.metric;
+  const metricOptions = jtokensAvailable
+    ? ([...METRIC_OPTIONS, JTOKENS_METRIC_OPTION] as const)
+    : METRIC_OPTIONS;
   const showingLimits = metric === "limits";
+  const showingJTokens = metric === "jtokens";
+  const hidesUsageChrome = showingLimits || showingJTokens;
+  const [jtokensReload, setJtokensReload] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [limitsNow, setLimitsNow] = useState(() => Date.now());
   const refreshingRef = useRef(false);
@@ -217,7 +240,7 @@ export function UsagePage() {
   const merged = shown?.merged ?? answeredUsage;
   const shownWindow = shown?.window ?? window;
   const shownHourly = shownWindow.resolution === "hour";
-  const refreshingUsage = isRefreshing && !showingLimits;
+  const refreshingUsage = isRefreshing && !hidesUsageChrome;
   const showingKept = shown !== null && shown.window !== window;
   const presentations = useAtomValue(environmentPresentations.presentationsAtom);
   const presentationsWithProviders = useAtomValue(
@@ -278,14 +301,16 @@ export function UsagePage() {
       return;
 
     const command = resolveUsageShortcut(event, keybindings);
-    const metricOption = METRIC_OPTIONS.find((option) => option.command === command);
+    const metricOption = command
+      ? METRIC_OPTIONS.find((option) => option.command === command)
+      : undefined;
     const periodOption = WINDOW_OPTIONS.find((option) => option.command === command);
     if (!metricOption && !periodOption) return;
 
     event.preventDefault();
     event.stopPropagation();
     if (metricOption) selectMetric(metricOption.value);
-    if (periodOption && !showingLimits) selectWindow(periodOption.days);
+    if (periodOption && !hidesUsageChrome) selectWindow(periodOption.days);
   });
 
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- window capture keydown listener for usage metric and period shortcuts
@@ -298,6 +323,10 @@ export function UsagePage() {
   const refreshWindow = () => {
     if (refreshingRef.current) return;
 
+    if (showingJTokens) {
+      setJtokensReload((count) => count + 1);
+      return;
+    }
     if (showingLimits) {
       refreshingRef.current = true;
       setIsRefreshing(true);
@@ -371,7 +400,7 @@ export function UsagePage() {
             selectedEnvironments={selectedEnvironments}
             selectedEnvironmentIds={selectedEnvironmentIds}
             onSelectionChange={setSelectedEnvironmentIds}
-            showUsageStatus={!showingLimits}
+            showUsageStatus={!hidesUsageChrome}
             refreshing={refreshingUsage}
             isPartial={isPartial}
             duplicateSources={merged.duplicateSources}
@@ -387,7 +416,7 @@ export function UsagePage() {
           />
         </WorkspaceBreadcrumbItem>
       </WorkspaceBreadcrumb>
-      {!showingLimits ? (
+      {!hidesUsageChrome ? (
         <span className="hidden min-w-0 truncate text-xs text-muted-foreground @7xl/usage-header:block">
           {windowLabel}
         </span>
@@ -395,7 +424,7 @@ export function UsagePage() {
       <div className="ms-auto hidden shrink-0 items-center justify-end gap-2 @4xl/usage-header:flex">
         {/* Limits are always current, so they have no period. The period sits before the metric
             tabs so dropping it never moves them. */}
-        {showingLimits ? null : (
+        {hidesUsageChrome ? null : (
           <ToggleGroup
             aria-label="Usage period"
             variant="segmented"
@@ -421,7 +450,7 @@ export function UsagePage() {
             if (isUsageMetric(value)) selectMetric(value);
           }}
         >
-          {METRIC_OPTIONS.map((option) => (
+          {metricOptions.map((option) => (
             <Toggle key={option.value} value={option.value} title={shortcutTitle(option)}>
               {option.label}
             </Toggle>
@@ -429,9 +458,11 @@ export function UsagePage() {
         </ToggleGroup>
         <Button
           onClick={refreshWindow}
-          aria-label={showingLimits ? "Refresh limits" : "Refresh usage"}
+          aria-label={
+            showingLimits ? "Refresh limits" : showingJTokens ? "Refresh JTokens" : "Refresh usage"
+          }
           aria-busy={isRefreshing}
-          disabled={isRefreshing || (!showingLimits && !canReadDiagnostics)}
+          disabled={isRefreshing || (!hidesUsageChrome && !canReadDiagnostics)}
           size={azonLayout ? "sm" : "icon-sm"}
           variant="ghost"
         >
@@ -440,7 +471,7 @@ export function UsagePage() {
         </Button>
       </div>
       <div className="ms-auto flex shrink-0 items-center justify-end gap-1 @4xl/usage-header:hidden">
-        {showingLimits ? null : (
+        {hidesUsageChrome ? null : (
           <Select value={String(windowDays)} onValueChange={(value) => selectWindow(Number(value))}>
             <SelectTrigger
               aria-label="Usage period"
@@ -478,11 +509,11 @@ export function UsagePage() {
             className="w-auto min-w-0"
           >
             <SelectValue>
-              {METRIC_OPTIONS.find((option) => option.value === metric)?.label}
+              {metricOptions.find((option) => option.value === metric)?.label}
             </SelectValue>
           </SelectTrigger>
           <SelectPopup align="end" alignItemWithTrigger={false}>
-            {METRIC_OPTIONS.map((option) => (
+            {metricOptions.map((option) => (
               <SelectItem key={option.value} value={option.value} title={shortcutTitle(option)}>
                 {option.label}
               </SelectItem>
@@ -491,9 +522,11 @@ export function UsagePage() {
         </Select>
         <Button
           onClick={refreshWindow}
-          aria-label={showingLimits ? "Refresh limits" : "Refresh usage"}
+          aria-label={
+            showingLimits ? "Refresh limits" : showingJTokens ? "Refresh JTokens" : "Refresh usage"
+          }
           aria-busy={isRefreshing}
-          disabled={isRefreshing || (!showingLimits && !canReadDiagnostics)}
+          disabled={isRefreshing || (!hidesUsageChrome && !canReadDiagnostics)}
           size={azonLayout ? "sm" : "icon-sm"}
           variant="ghost"
         >
@@ -514,7 +547,9 @@ export function UsagePage() {
 
         <ScrollArea className="min-h-0 flex-1">
           <WorkspacePageContainer width="wide">
-            {selectedEnvironments.length === 0 ? (
+            {showingJTokens ? (
+              <JTokensUsage reloadKey={jtokensReload} onLoadingChange={setIsRefreshing} />
+            ) : selectedEnvironments.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 {environments.length === 0
                   ? `Connect an environment to see ${showingLimits ? "limits" : "usage"}.`
@@ -556,7 +591,7 @@ export function UsagePage() {
           </WorkspacePageContainer>
         </ScrollArea>
       </div>
-      {showingLimits ? null : (
+      {hidesUsageChrome ? null : (
         <UsageModelDialogHost
           models={merged.models}
           environments={selectedEnvironments}
