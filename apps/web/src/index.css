@@ -2791,9 +2791,3 @@ code {
   font-weight: 600;
   letter-spacing: -0.03em;
 }
-
-/* Plugins can set inline z-index from client.js, which the CSS clamp cannot see. App modals sit above any plugin value. */
-[data-app-modal-layer],
-[data-slot="dialog-backdrop"] {
-  z-index: 2147483000;
-}

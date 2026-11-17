@@ -101,7 +101,6 @@ function DialogViewport({ className, ...props }: DialogPrimitive.Viewport.Props)
         className,
       )}
       data-slot="dialog-viewport"
-      data-app-modal-layer
       {...props}
     />
   );
