@@ -189,6 +189,7 @@ export function McpAppFrame(props: {
   const attachFullscreenChrome = (chrome: HTMLDivElement) => {
     const box = chrome.parentElement;
     if (box === null) return;
+    box.setAttribute("data-app-top-layer", "");
     if (!box.matches(":popover-open")) box.showPopover();
     readLive().props.onFullscreenChange?.(true);
     return () => {

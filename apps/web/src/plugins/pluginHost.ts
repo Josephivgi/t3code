@@ -5,6 +5,7 @@ import { readDesktopPrimaryBearerToken } from "../environments/primary/desktopAu
 import { isSameOriginBrowserPrimary } from "../environments/primary/httpLayer";
 import { resolvePrimaryEnvironmentHttpUrl } from "../environments/primary/target";
 import { clampPluginCss } from "./pluginCss";
+import { installPluginOverlapGuard } from "./overlapGuard";
 import { pluginsToRetry } from "./pluginRetry.logic";
 import { registerSmallTool, type SmallTool } from "./smallTools";
 
@@ -460,6 +461,7 @@ function watchForChanges() {
 export async function startPluginHost(): Promise<void> {
   if (started) return;
   started = true;
+  installPluginOverlapGuard();
   window.addEventListener("pagehide", () => {
     unloadAll();
     confirmBoot(true);
