@@ -21,6 +21,7 @@ import {
   MessageSquareTextIcon,
   MessagesSquareIcon,
   PanelsTopLeftIcon,
+  PuzzleIcon,
   KeyboardIcon,
   KeyRoundIcon,
   MicIcon,
@@ -110,6 +111,7 @@ const SETTINGS_SECTION_ICONS: Readonly<
   "/settings/secrets": KeyRoundIcon,
   "/settings/maintenance": WrenchIcon,
   "/settings/labs": FlaskConicalIcon,
+  "/settings/plugins": PuzzleIcon,
   "/settings/about": InfoIcon,
   "/settings/archived": ArchiveIcon,
 };

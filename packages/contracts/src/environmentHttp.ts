@@ -80,6 +80,12 @@ import {
 } from "./orchestrationV2.ts";
 import { Project, ProjectMutation, ProjectSnapshot } from "./project.ts";
 import {
+  PluginId,
+  PluginInstallRequest,
+  PluginListResult,
+  PluginOperationResult,
+} from "./plugins.ts";
+import {
   PullRequestDiffInput,
   PullRequestDiffResult,
   PullRequestOperationError,
@@ -119,6 +125,8 @@ export const EnvironmentRequestInvalidReason = Schema.Literals([
   "invalid_audio",
   "speech_unavailable",
   "speech_busy",
+  "invalid_plugin",
+  "plugin_revert_unavailable",
 ]);
 export type EnvironmentRequestInvalidReason = typeof EnvironmentRequestInvalidReason.Type;
 
@@ -148,6 +156,7 @@ export const EnvironmentInternalErrorReason = Schema.Literals([
   "connect_device_revoke_failed",
   "project_snapshot_failed",
   "project_mutation_failed",
+  "plugin_operation_failed",
   "orchestration_snapshot_failed",
   "orchestration_thread_snapshot_failed",
   "orchestration_thread_bounded_snapshot_failed",
@@ -268,7 +277,10 @@ export class EnvironmentInternalError extends Schema.TaggedError<EnvironmentInte
   }
 }
 
-export const EnvironmentResourceNotFoundReason = Schema.Literals(["thread_not_found"]);
+export const EnvironmentResourceNotFoundReason = Schema.Literals([
+  "thread_not_found",
+  "plugin_not_found",
+]);
 export type EnvironmentResourceNotFoundReason = typeof EnvironmentResourceNotFoundReason.Type;
 
 export class EnvironmentResourceNotFoundError extends Schema.TaggedError<EnvironmentResourceNotFoundError>()(
@@ -982,6 +994,77 @@ export class EnvironmentVoiceHttpApi extends HttpApiGroup.make("voice")
     }).middleware(EnvironmentAuthenticatedAuth),
   ) {}
 
+const EnvironmentPluginsParams = Schema.Struct({ pluginId: PluginId });
+
+class EnvironmentPluginsHttpApi extends HttpApiGroup.make("plugins")
+  .add(
+    HttpApiEndpoint.get("list", "/api/plugins", {
+      headers: OptionalBearerHeaders,
+      success: PluginListResult,
+      error: EnvironmentScopedOperationErrors,
+    }).middleware(EnvironmentAuthenticatedAuth),
+  )
+  .add(
+    HttpApiEndpoint.post("install", "/api/plugins/install", {
+      headers: OptionalBearerHeaders,
+      payload: PluginInstallRequest,
+      success: PluginOperationResult,
+      error: [
+        ...EnvironmentScopedOperationErrors,
+        EnvironmentRequestInvalidError,
+        EnvironmentResourceNotFoundError,
+      ],
+    }).middleware(EnvironmentAuthenticatedAuth),
+  )
+  .add(
+    HttpApiEndpoint.post("enable", "/api/plugins/:pluginId/enable", {
+      headers: OptionalBearerHeaders,
+      params: EnvironmentPluginsParams,
+      success: PluginOperationResult,
+      error: [
+        ...EnvironmentScopedOperationErrors,
+        EnvironmentRequestInvalidError,
+        EnvironmentResourceNotFoundError,
+      ],
+    }).middleware(EnvironmentAuthenticatedAuth),
+  )
+  .add(
+    HttpApiEndpoint.post("disable", "/api/plugins/:pluginId/disable", {
+      headers: OptionalBearerHeaders,
+      params: EnvironmentPluginsParams,
+      success: PluginOperationResult,
+      error: [
+        ...EnvironmentScopedOperationErrors,
+        EnvironmentRequestInvalidError,
+        EnvironmentResourceNotFoundError,
+      ],
+    }).middleware(EnvironmentAuthenticatedAuth),
+  )
+  .add(
+    HttpApiEndpoint.post("remove", "/api/plugins/:pluginId/remove", {
+      headers: OptionalBearerHeaders,
+      params: EnvironmentPluginsParams,
+      success: PluginOperationResult,
+      error: [
+        ...EnvironmentScopedOperationErrors,
+        EnvironmentRequestInvalidError,
+        EnvironmentResourceNotFoundError,
+      ],
+    }).middleware(EnvironmentAuthenticatedAuth),
+  )
+  .add(
+    HttpApiEndpoint.post("revert", "/api/plugins/revert", {
+      headers: OptionalBearerHeaders,
+      payload: Schema.Struct({ pluginId: Schema.optional(PluginId) }),
+      success: PluginOperationResult,
+      error: [
+        ...EnvironmentScopedOperationErrors,
+        EnvironmentResourceNotFoundError,
+        EnvironmentRequestInvalidError,
+      ],
+    }).middleware(EnvironmentAuthenticatedAuth),
+  ) {}
+
 class EnvironmentConnectHttpApi extends HttpApiGroup.make("connect")
   .add(
     HttpApiEndpoint.post("linkProof", "/api/connect/link-proof", {
@@ -1079,5 +1162,6 @@ export class EnvironmentHttpApi extends HttpApi.make("environment")
   .add(EnvironmentPullRequestsHttpApi)
   .add(EnvironmentProjectsHttpApi)
   .add(EnvironmentVoiceHttpApi)
+  .add(EnvironmentPluginsHttpApi)
   .add(EnvironmentConnectHttpApi)
   .add(EnvironmentWebhooksHttpApi) {}

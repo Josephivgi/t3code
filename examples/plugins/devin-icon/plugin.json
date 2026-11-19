@@ -1,0 +1,16 @@
+{
+  "id": "devin-icon",
+  "name": "Devin",
+  "version": "1.0.0",
+  "description": "Adds the Devin icon to the chat header. Click it to open Devin.",
+  "capabilities": ["ui:header-icon"],
+  "contributes": {
+    "headerIcons": [
+      {
+        "icon": "icon.svg",
+        "title": "Devin",
+        "href": "https://app.devin.ai"
+      }
+    ]
+  }
+}
