@@ -1,7 +1,11 @@
 import type { EnvironmentId, PluginId, PluginRecord } from "@t3tools/contracts";
 import { useEffect, useState } from "react";
 
-import { useEnvironmentPluginsApi, type PluginsApi } from "../../lib/pluginsApi";
+import {
+  subscribePluginsChanged,
+  useEnvironmentPluginsApi,
+  type PluginsApi,
+} from "../../lib/pluginsApi";
 
 export interface EnvironmentPluginsState {
   readonly api: PluginsApi | null;
@@ -24,6 +28,19 @@ export function useEnvironmentPlugins(
     setLoadingState(true);
     setTick((value) => value + 1);
   };
+
+  // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- subscribes to in-app plugin mutations and polls while visible so agent-driven changes reach mounted views
+  useEffect(() => {
+    const bump = () => setTick((value) => value + 1);
+    const unsubscribe = subscribePluginsChanged(bump);
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === "visible") bump();
+    }, 5000);
+    return () => {
+      unsubscribe();
+      window.clearInterval(interval);
+    };
+  }, []);
 
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- fetches the plugin list from the environment HTTP API and mirrors it in state
   useEffect(() => {

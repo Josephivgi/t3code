@@ -12,6 +12,19 @@ import { usePreparedConnection } from "../state/session";
 const decodeList = Schema.decodeUnknownSync(PluginListResult);
 const decodeOperation = Schema.decodeUnknownSync(PluginOperationResult);
 
+const pluginsChangedTarget = new EventTarget();
+const PLUGINS_CHANGED_EVENT = "plugins-changed";
+
+/** Refreshes every mounted `useEnvironmentPlugins` after a mutation made through this API. */
+function notifyPluginsChanged() {
+  pluginsChangedTarget.dispatchEvent(new Event(PLUGINS_CHANGED_EVENT));
+}
+
+export function subscribePluginsChanged(listener: () => void): () => void {
+  pluginsChangedTarget.addEventListener(PLUGINS_CHANGED_EVENT, listener);
+  return () => pluginsChangedTarget.removeEventListener(PLUGINS_CHANGED_EVENT, listener);
+}
+
 async function requestJson(input: {
   readonly baseUrl: string;
   readonly path: string;
@@ -31,8 +44,12 @@ async function requestJson(input: {
   if (!response.ok) {
     let detail = `${response.status}`;
     try {
-      const error = (await response.json()) as { message?: string; reason?: string };
-      detail = error.message ?? error.reason ?? detail;
+      const error = (await response.json()) as {
+        message?: string;
+        reason?: string;
+        detail?: string;
+      };
+      detail = error.detail ?? error.message ?? error.reason ?? detail;
     } catch {
       // keep status detail
     }
@@ -50,7 +67,8 @@ export interface PluginsApi {
   revert(pluginId?: PluginId): Promise<string>;
 }
 
-function makePluginsApi(baseUrl: string): PluginsApi {
+function makePluginsApi(rawBaseUrl: string): PluginsApi {
+  const baseUrl = rawBaseUrl.replace(/\/+$/, "");
   const post = (path: string, body?: unknown) =>
     requestJson({ baseUrl, path, method: "POST", body });
   return {
@@ -63,18 +81,22 @@ function makePluginsApi(baseUrl: string): PluginsApi {
       if (!("plugin" in result) || result.plugin === undefined) {
         throw new Error("Install did not return a plugin record.");
       }
+      notifyPluginsChanged();
       return result.plugin;
     },
     async setEnabled(pluginId, enabled) {
       await post(`/api/plugins/${pluginId}/${enabled ? "enable" : "disable"}`);
+      notifyPluginsChanged();
     },
     async remove(pluginId) {
       await post(`/api/plugins/${pluginId}/remove`);
+      notifyPluginsChanged();
     },
     async revert(pluginId) {
       const result = decodeOperation(
         await post("/api/plugins/revert", pluginId === undefined ? {} : { pluginId }),
       );
+      notifyPluginsChanged();
       return "reverted" in result ? (result.reverted ?? "reverted") : "reverted";
     },
   };

@@ -170,6 +170,7 @@ export class EnvironmentRequestInvalidError extends Schema.TaggedError<Environme
   {
     code: Schema.Literal("invalid_request"),
     reason: EnvironmentRequestInvalidReason,
+    detail: Schema.optionalKey(Schema.String),
     traceId: TrimmedNonEmptyString,
   },
   { httpApiStatus: 400 },

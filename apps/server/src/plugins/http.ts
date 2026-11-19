@@ -36,7 +36,7 @@ const failPluginError = Effect.fn("environment.plugins.failError")(function* (
 ) {
   switch (cause._tag) {
     case "PluginRefusedError":
-      return yield* failEnvironmentInvalidRequest("invalid_plugin");
+      return yield* failEnvironmentInvalidRequest("invalid_plugin", cause.problem);
     case "PluginNotFoundError":
       return yield* failEnvironmentNotFound("plugin_not_found");
     case "PluginRevertUnavailableError":

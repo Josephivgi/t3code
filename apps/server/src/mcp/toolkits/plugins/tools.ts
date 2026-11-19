@@ -26,7 +26,6 @@ const PluginsListTool = Tool.make("t3_plugins_list", {
   ...shared,
   description:
     "List T3 Code plugins installed on this environment: id, enabled state, manifest, and the recent operation journal. Call before `t3_plugins_install`, `t3_plugins_set_enabled`, `t3_plugins_remove`, or `t3_plugins_revert`.",
-  parameters: Schema.Struct({}),
   success: Schema.Struct({
     pluginsDir: Schema.String,
     plugins: Schema.Array(PluginRecord),
